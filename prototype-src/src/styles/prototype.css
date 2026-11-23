@@ -1,0 +1,372 @@
+/* ===================================================================
+   PROTOTYPE PAGE (not part of the app)
+   Page layout, device frames, mock OS notifications, the Prototype
+   controls panel and the screen gallery. Fixed colors on purpose: this
+   chrome should look the same whatever app theme is active.
+   =================================================================== */
+
+/* ---- Page layout ---- */
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+body {
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  background: #d5dae1;
+  color: #1f2328;
+}
+button {
+  font: inherit;
+  color: inherit;
+}
+[hidden] {
+  display: none !important;
+}
+.stage {
+  display: flex;
+  min-height: 100vh;
+}
+.desk {
+  flex: 1;
+  min-width: 0;
+  padding: 32px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-content: flex-start;
+  justify-content: center;
+  align-items: flex-start;
+  background: radial-gradient(circle at 20% 10%, #e9edf2, #d5dae1 60%);
+}
+
+/* ---- App popup frame (400 × 600, like the extension popup) ---- */
+.popup {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  width: 400px;
+  height: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.24),
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+  background: var(--bg);
+}
+
+/* ---- Mock OS notifications ---- */
+.sysnotes {
+  position: fixed;
+  right: 336px;
+  bottom: 20px;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 272px;
+}
+.sysnote {
+  background: #f8f9fb;
+  color: #1f2328;
+  border: 1px solid #cfd5dd;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+  padding: 12px 14px;
+  font-size: 13px;
+  animation: snin 0.25s ease-out;
+}
+@keyframes snin {
+  from {
+    transform: translateX(30px);
+    opacity: 0;
+  }
+}
+.sn-app {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #5b6370;
+  font-weight: 600;
+}
+.sn-app .tomato {
+  width: 14px;
+  height: 14px;
+}
+.sn-dev {
+  font-weight: 400;
+}
+.sn-x {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  color: #5b6370;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+}
+.sn-title {
+  font-weight: 700;
+  margin-top: 4px;
+}
+.sn-body {
+  color: #3f4652;
+  margin-top: 2px;
+}
+
+/* ---- Prototype controls panel ---- */
+.controls {
+  width: 316px;
+  flex: 0 0 316px;
+  background: #fff;
+  border-left: 1px solid #c3c9d1;
+  padding: 18px 18px 28px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  font-size: 13px;
+  color: #1f2328;
+}
+.controls.collapsed {
+  flex-basis: 56px;
+  width: 56px;
+  padding: 12px 8px;
+}
+.controls.collapsed #controls-body,
+.controls.collapsed .ctl-intro {
+  display: none;
+}
+.ctl-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+}
+.ctl-kicker {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: #fff3c4;
+  color: #6b4e00;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+.controls h2 {
+  font-size: 16px;
+  margin: 6px 0 4px;
+}
+.ctl-intro {
+  color: #59616c;
+  margin: 0 0 6px;
+}
+.ctl-collapse {
+  border: 1px solid #c3c9d1;
+  background: #fff;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.ctl {
+  border-top: 1px solid #e5e7eb;
+  padding: 12px 0;
+}
+.ctl h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #59616c;
+  margin: 0 0 8px;
+}
+.ctl-seg {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.ctl-seg label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #c3c9d1;
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.ctl-seg label:has(input:checked) {
+  background: #1f2328;
+  color: #fff;
+  border-color: #1f2328;
+}
+.ctl-seg input {
+  margin: 0;
+  accent-color: #1f2328;
+}
+.ctl button.cb {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 1px solid #c3c9d1;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.ctl button.cb:hover {
+  background: #f3f5f8;
+}
+.ctl button.cb.primary {
+  background: #1f2328;
+  color: #fff;
+  border-color: #1f2328;
+}
+.ctl button.cb.danger {
+  color: #b42318;
+}
+.ctl select {
+  width: 100%;
+  padding: 7px;
+  border: 1px solid #c3c9d1;
+  border-radius: 8px;
+  font: inherit;
+}
+.ctl-note {
+  font-size: 12px;
+  color: #59616c;
+  margin: 4px 0 0;
+}
+.ctl-status {
+  min-height: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #15803d;
+}
+
+/* ---- Screen gallery ---- */
+.gallery {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #e6e9ee;
+  overflow: auto;
+  padding: 20px 28px 60px;
+}
+.gal-head {
+  position: sticky;
+  top: -20px;
+  z-index: 2;
+  background: #e6e9ee;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #c3c9d1;
+  margin-bottom: 20px;
+}
+.gal-head h2 {
+  margin: 0;
+  font-size: 20px;
+}
+.gal-head p {
+  margin: 0;
+  color: #59616c;
+  flex: 1;
+}
+.gal-head button {
+  border: 0;
+  background: #1f2328;
+  color: #fff;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.gal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 400px);
+  gap: 28px 24px;
+  justify-content: center;
+}
+.gal-item {
+  margin: 0;
+}
+.gal-item figcaption {
+  font-size: 13px;
+  font-weight: 700;
+  color: #3f4652;
+  margin-bottom: 8px;
+}
+.gal-item .popup {
+  position: relative;
+  top: 0;
+  right: 0;
+}
+
+/* ---- Narrow screens: controls panel moves below the app ---- */
+@media (max-width: 980px) {
+  .stage {
+    flex-direction: column;
+  }
+  .controls {
+    width: auto;
+    flex: none;
+    height: auto;
+    position: static;
+    border-left: 0;
+    border-top: 1px solid #c3c9d1;
+  }
+  .sysnotes {
+    right: 16px;
+  }
+}
+
+/* ---- Device frames ---- */
+.dev {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dev-cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #3f4652;
+}
+.dev-cap button {
+  font-size: 12px;
+  border: 1px solid #9aa3ae;
+  background: #fff;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+.dev .popup {
+  position: relative;
+  top: 0;
+  right: 0;
+}
+.dev-cap button:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
