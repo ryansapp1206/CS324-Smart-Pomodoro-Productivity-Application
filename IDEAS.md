@@ -14,15 +14,21 @@ Already in the prototype (no need to re-suggest):
 
 ## 🎨 Themes
 
--
+- Jynxzi(Cashton)
+- Skibidi(Cashton)
+- John Pork Universe of Characters(Cashton, ask me about this one so I can explain)
+- Huss Huss Huss(Cashton)
 
 ## 🔊 Sound packs
 
--
+- "Bahlright" - Jynxzi(Cashton)
+- "Huss Huss Huss"(Cashton)
 
 ## 🖼️ Profile pictures
 
--
+- Skibidi Toilet(Cashton)
+- John Pork Universe of Characters(Cashton, ask me about this one so I can explain)
+- 
 
 ## 🛍️ Other shop items
 
@@ -30,7 +36,7 @@ Already in the prototype (no need to re-suggest):
 
 ## ⚙️ Features
 
--
+- Leaderboard, like Duolingo(Cashton)
 
 ## 🧪 Unhinged / maybe later
 
