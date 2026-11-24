@@ -15,8 +15,8 @@ failures, opens a second device, switches accounts and themes, and opens a scree
 ## Repository layout
 
 ```
-docs/index.html   the built prototype (the only folder GitHub Pages serves)
-prototype-src/    readable source for the prototype; run ./prototype-src/build.sh to rebuild docs/index.html
+design/prototype/   source for the interactive prototype (see its README)
 ```
 
-See [`prototype-src/README.md`](prototype-src/README.md) for how the prototype code is organized and how to add themes.
+The hosted prototype lives on the `gh-pages` branch, which only contains the built `index.html`.
+GitHub Pages serves that branch, so `main` stays free for the extension code and project documentation.

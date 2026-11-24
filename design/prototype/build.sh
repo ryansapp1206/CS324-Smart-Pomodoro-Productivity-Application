@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Builds the single-file prototype from src/.
-# Usage: ./prototype-src/build.sh   →   writes docs/index.html (the page GitHub Pages serves)
+# Usage: ./design/prototype/build.sh   →   writes design/prototype/dist/index.html
+# To publish it, copy dist/index.html to the gh-pages branch (see README.md).
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -36,6 +37,8 @@ def bundle(paths):
 
 html = open("src/index.template.html", encoding="utf-8").read()
 html = html.replace("/*__STYLES__*/", bundle(styles)).replace("/*__SCRIPTS__*/", bundle(scripts))
-open("../docs/index.html", "w", encoding="utf-8").write(html)
+import os
+os.makedirs("dist", exist_ok=True)
+open("dist/index.html", "w", encoding="utf-8").write(html)
 PY
-echo "Built docs/index.html"
+echo "Built design/prototype/dist/index.html"

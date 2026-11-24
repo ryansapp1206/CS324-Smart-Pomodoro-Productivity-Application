@@ -1,10 +1,23 @@
 # Prototype source
 
-The prototype ships as one self-contained HTML file (`docs/index.html`) so it can be opened offline or hosted anywhere.
+The prototype ships as one self-contained HTML file so it can be opened offline or hosted anywhere.
 This folder holds the same code split into readable modules. `build.sh` joins them in order:
 
 ```
-./prototype-src/build.sh   →   docs/index.html
+./design/prototype/build.sh   →   design/prototype/dist/index.html   (dist/ is not committed)
+```
+
+## Publishing an update
+
+The live site is served from the `gh-pages` branch, which only holds `index.html` and `.nojekyll`.
+After rebuilding, copy the new file onto that branch:
+
+```
+./design/prototype/build.sh
+git worktree add ../gh-pages gh-pages
+cp design/prototype/dist/index.html ../gh-pages/index.html
+cd ../gh-pages && git commit -am "Update prototype" && git push && cd -
+git worktree remove ../gh-pages
 ```
 
 | File | What it contains |
@@ -39,4 +52,4 @@ Add one entry to `THEME_CATALOG`, `SOUND_PACKS` or `AVATARS` in `src/js/04-shop.
 
 ## Formatting
 
-Code is formatted with Prettier (`.prettierrc`): `npx prettier --write "prototype-src/src/**/*.{js,css}"`.
+Code is formatted with Prettier (`.prettierrc`): `npx prettier --write "design/prototype/src/**/*.{js,css}"`.
