@@ -49,6 +49,17 @@ button {
   box-shadow: var(--shadow-md);
 }
 
+/* Signed out: the card fits the form instead of the app's full height. */
+.app-frame:has(.auth) {
+  height: auto;
+  min-height: 0;
+  max-height: calc(100dvh - 48px);
+}
+.app-frame:has(.auth) .auth {
+  height: auto;
+  max-height: calc(100dvh - 48px);
+}
+
 @media (max-width: 440px), (max-height: 620px) {
   body {
     display: block;
@@ -62,5 +73,11 @@ button {
     border: 0;
     border-radius: 0;
     box-shadow: none;
+  }
+
+  .app-frame:has(.auth),
+  .app-frame:has(.auth) .auth {
+    height: 100dvh;
+    max-height: none;
   }
 }

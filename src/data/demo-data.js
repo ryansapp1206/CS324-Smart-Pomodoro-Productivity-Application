@@ -9,9 +9,9 @@ import { DEFAULT_SETTINGS } from './model.js';
 
 export const DEMO_USER = {
   id: 'u_demo',
-  email: 'tungtung@ramranch.app',
+  email: 'demo@example.com',
   password: 'pomodoro123',
-  displayName: 'Tung Tung Tung Sahur',
+  displayName: 'Alex Morgan',
 };
 
 const HOUR = 3600000;

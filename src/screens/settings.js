@@ -7,7 +7,7 @@
 
 import { escapeHtml } from '../core/utils.js';
 import { icon } from '../core/icons.js';
-import { t, applyTheme, applyReducedMotion, builtThemes } from '../core/theme-engine.js';
+import { t, applyTheme, applyReducedMotion, builtThemes, setMode } from '../core/theme-engine.js';
 import * as data from '../data/index.js';
 import { DURATION_LIMITS } from '../data/model.js';
 import { equippedId, findShopItem, ownsItem } from '../shop/catalog.js';
@@ -64,6 +64,21 @@ function themeCard(theme, isSelected) {
       <span class="tc-name">${escapeHtml(theme.name)}</span>
       <span class="tc-desc">${escapeHtml(theme.description)}</span>
     </button>`;
+}
+
+/**
+ * The brainrot toggle. It switches the whole content ecosystem (src/content/):
+ * themes, sounds, profile pictures, wording and the currency's name. Like
+ * every setting it previews at once and is kept only when Save is pressed.
+ */
+function brainrotModeRow(draft) {
+  const isOn = draft.mode === 'brainrot';
+  return `
+    <div class="sw-row">
+      <div class="sw-txt"><label for="app-mode">${t('set.mode')}</label><div class="sub" id="app-mode-d">${t('set.modeSub')}</div></div>
+      <input type="checkbox" role="switch" class="switch" id="app-mode" ${isOn ? 'checked' : ''}
+        data-live="brainrotMode" data-focus-id="settingsDraft.mode" aria-describedby="app-mode-d">
+    </div>`;
 }
 
 function dailyReminderTime(draft) {
@@ -125,6 +140,7 @@ export function settingsScreen(app) {
       <div style="margin:2px 0 4px">
         ${actionButton('openShop', t('currency.moreThemes'), { arg: 'theme', className: 'btn-link', focusId: 'openShop:settings' })}
       </div>
+      ${brainrotModeRow(draft)}
       ${switchRow(app, 'settingsDraft.reduceMotion', 'set.reduceMotion', 'set.reduceMotionSub')}
     </section>
 
@@ -242,6 +258,14 @@ function refreshSettingsFeedback(app) {
 
 export const liveUpdates = {
   settings: refreshSettingsFeedback,
+  /** Preview the other ecosystem with its equipped (or default) theme. */
+  brainrotMode(app, isOn) {
+    const draft = app.ui.settingsDraft;
+    draft.mode = isOn ? 'brainrot' : 'professional';
+    setMode(draft.mode);
+    applyTheme(equippedId(draft, 'theme'));
+    app.render();
+  },
   /** Switches: reduce motion previews straight away; others show or hide fields. */
   render(app, value, input) {
     if (input.dataset.bind === 'settingsDraft.reduceMotion') applyReducedMotion(value);

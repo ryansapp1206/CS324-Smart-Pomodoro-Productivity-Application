@@ -14,7 +14,7 @@ python3 -m http.server 8080      # then open http://localhost:8080
 
 VS Code's **Live Server** extension works too.
 
-Log in with the demo account `tungtung@ramranch.app` / `pomodoro123`, or create an account. After changing code, refresh the page.
+Log in with the demo account `demo@example.com` / `pomodoro123`, or create an account. After changing code, refresh the page.
 
 ## Put it on GitHub Pages
 
