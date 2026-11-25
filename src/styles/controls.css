@@ -1,0 +1,339 @@
+/* ===================================================================
+   CONTROLS: buttons, spinner, form fields, banners, segmented controls
+   Colors, fonts and sizes come from theme tokens (var(--token)) only.
+   =================================================================== */
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background var(--duration-fast) var(--easing),
+    filter var(--duration-fast);
+}
+.btn:hover:not(:disabled) {
+  background: var(--surface-sunken);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn-primary,
+.btn-primary:hover:not(:disabled) {
+  background: var(--primary);
+  color: var(--on-primary);
+  border-color: transparent;
+}
+.btn-mode,
+.btn-mode:hover:not(:disabled) {
+  background: var(--mode);
+  color: var(--on-mode);
+  border-color: transparent;
+}
+.btn-danger,
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger);
+  color: var(--on-danger);
+  border-color: transparent;
+}
+.btn-primary:hover:not(:disabled),
+.btn-mode:hover:not(:disabled),
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(0.93);
+}
+.btn-danger-outline {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 50%, var(--border));
+}
+.btn-ghost {
+  background: transparent;
+  border-color: transparent;
+}
+.btn-sm {
+  font-size: 13px;
+  padding: 0 10px;
+}
+.btn-tall {
+  min-height: 44px;
+}
+.btn-block {
+  width: 100%;
+}
+.btn-lg {
+  min-height: 52px;
+  min-width: 148px;
+  padding: 0 26px;
+  font-size: 16px;
+  border-radius: var(--radius-full);
+}
+.btn-pill {
+  min-height: 44px;
+  border-radius: var(--radius-full);
+  padding: 0 14px;
+}
+.btn-link {
+  border: 0;
+  background: none;
+  color: var(--primary);
+  font-weight: 600;
+  padding: 2px 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-size: inherit;
+}
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  flex: 0 0 auto;
+  padding: 0;
+}
+.icon-btn:hover:not(:disabled) {
+  background: var(--surface-sunken);
+  color: var(--text);
+}
+
+/* ---- Spinner ---- */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.8s linear infinite;
+}
+.spinner.lg {
+  width: 32px;
+  height: 32px;
+  border-width: 3px;
+  color: var(--primary);
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ---- Form fields ---- */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 14px;
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.field > label,
+.field legend {
+  font-weight: 600;
+  font-size: 13px;
+  padding: 0;
+  margin-bottom: 6px;
+}
+fieldset.field legend {
+  margin-bottom: 6px;
+}
+.input {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+.input::placeholder {
+  color: var(--text-muted);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus-ring) 30%, transparent);
+}
+.input.invalid {
+  border-color: var(--danger);
+}
+.input[readonly] {
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+}
+textarea.input {
+  resize: vertical;
+  min-height: 70px;
+}
+.err {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: var(--danger);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.err svg.i {
+  width: 15px;
+  height: 15px;
+  margin-top: 1px;
+}
+.hint {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+.pw-wrap {
+  position: relative;
+}
+.pw-wrap .input {
+  padding-right: 44px;
+}
+.pw-wrap .icon-btn {
+  position: absolute;
+  right: 2px;
+  top: 2px;
+}
+.field-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: flex-start;
+}
+.counter {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ---- Banners ---- */
+.banner {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 8px 10px 12px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.banner > svg.i {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+}
+.banner-danger {
+  background: var(--danger-bg);
+  border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+}
+.banner-danger > svg.i {
+  color: var(--danger);
+}
+.banner-warn {
+  background: var(--warning-bg);
+  border-color: color-mix(in srgb, var(--warning) 35%, transparent);
+}
+.banner-warn > svg.i {
+  color: var(--warning);
+}
+.banner-info {
+  background: var(--info-bg);
+  border-color: color-mix(in srgb, var(--info) 30%, transparent);
+}
+.banner-info > svg.i {
+  color: var(--info);
+}
+.banner-success {
+  background: var(--success-bg);
+  border-color: color-mix(in srgb, var(--success) 35%, transparent);
+}
+.banner-success > svg.i {
+  color: var(--success);
+}
+.banner .grow {
+  flex: 1;
+  min-width: 0;
+}
+.b-title {
+  font-weight: 700;
+}
+.b-list {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+.banner-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* ---- Segmented controls ---- */
+.seg {
+  display: flex;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 2px;
+}
+.seg-btn {
+  flex: 1;
+  min-height: 34px;
+  border: 0;
+  background: transparent;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+.seg-btn:hover {
+  color: var(--text);
+}
+.seg-btn.on {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+.seg-modes .seg-btn.on {
+  background: var(--mode);
+  color: var(--on-mode);
+}
+.seg-btn.pri-high.on {
+  background: var(--priority-high-bg);
+  color: var(--priority-high);
+}
+.seg-btn.pri-medium.on {
+  background: var(--priority-medium-bg);
+  color: var(--priority-medium);
+}
+.seg-btn.pri-low.on {
+  background: var(--priority-low-bg);
+  color: var(--priority-low);
+}

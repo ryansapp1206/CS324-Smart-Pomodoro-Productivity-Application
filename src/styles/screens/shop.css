@@ -1,0 +1,149 @@
+/* ===================================================================
+   SCREEN: balance card and shop
+   Colors, fonts and sizes come from theme tokens (var(--token)) only.
+   =================================================================== */
+
+/* ---- Balance card and Shop ---- */
+.balance-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 12%, var(--surface)), var(--surface));
+}
+.balance-icon,
+.shop-bal-icon {
+  display: flex;
+  color: var(--primary);
+}
+.balance-icon svg.i {
+  width: 30px;
+  height: 30px;
+}
+.balance-v {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.avatar {
+  padding: 0;
+  overflow: hidden;
+}
+.av {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+/* Profile-picture badges: the color comes from the avatar file, the icon stays dark so it reads on every badge color. */
+.av-icon {
+  color: #1d1b18;
+}
+.av-icon svg.i {
+  width: 55%;
+  height: 55%;
+}
+.shop-bal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--primary) 14%, var(--surface)), var(--surface));
+  border: 1px solid var(--border);
+  font-size: 15px;
+}
+.shop-thumb {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+  color: var(--primary);
+}
+.shop-thumb svg.i {
+  width: 22px;
+  height: 22px;
+}
+.shop-thumb.av-icon {
+  color: #1d1b18;
+}
+.av-ini {
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--on-primary);
+  font-weight: 800;
+  font-size: 14px;
+}
+.shop-acts {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+.shop-item .grow {
+  flex: 1;
+}
+.tab span {
+  font-size: 11.5px;
+}
+.shop-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.sw-mini {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  flex-direction: column;
+}
+.tag {
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.card-h h2:focus {
+  outline: none;
+}
+.info-line {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  padding: 8px 0;
+}
+.info-line svg.i {
+  width: 15px;
+  height: 15px;
+  margin-top: 2px;
+}
