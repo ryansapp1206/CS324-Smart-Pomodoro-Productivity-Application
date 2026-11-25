@@ -5,7 +5,7 @@
    ===================================================================== */
 
 import { storage, STORAGE_KEYS } from '../core/storage.js';
-import { applyReducedMotion, applyTheme, setMode, t } from '../core/theme-engine.js';
+import { applyReducedMotion, applyTheme, setAccent, setMode, t } from '../core/theme-engine.js';
 import { DEFAULT_MODE } from '../content/index.js';
 import * as data from '../data/index.js';
 import { createIdleTimer } from '../timer/rules.js';
@@ -13,9 +13,10 @@ import { createUiState } from './state.js';
 import { checkDeadlineBanner } from './deadlines.js';
 import { listenToBackground, showUnseenAlert, startClock } from './timer-client.js';
 
-/** Mode (content ecosystem), theme and reduced motion from the saved settings (also undoes a Settings preview). */
+/** Mode (content ecosystem), theme, button color and reduced motion from the saved settings (also undoes a Settings preview). */
 export function applyAppearance(app) {
   setMode(app.settings().mode);
+  setAccent(app.settings().accent);
   applyTheme(app.settings().theme);
   applyReducedMotion(app.settings().reduceMotion);
 }
@@ -40,6 +41,7 @@ export function mergeSessions(saved, pending) {
 export async function boot(app) {
   const savedSettings = await storage.get(STORAGE_KEYS.settings);
   setMode(savedSettings ? savedSettings.mode : DEFAULT_MODE);
+  setAccent(savedSettings && savedSettings.accent);
   applyTheme(savedSettings && savedSettings.theme); // the user's theme, or the default when signed out
   app.timer = (await storage.get(STORAGE_KEYS.timer)) || createIdleTimer();
   listenToBackground(app);
@@ -77,6 +79,7 @@ export async function logout(app, { notice = null } = {}) {
     ui: createUiState(),
   });
   setMode(DEFAULT_MODE); // back to the professional look
+  setAccent();
   applyTheme();
   applyReducedMotion(false);
   app.ui.notice = notice || t('logout.notice'); // after the theme switch, so it's in the default theme's words

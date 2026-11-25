@@ -83,7 +83,7 @@ export default {
   id: 'professional',
   currency: { name: 'points', title: 'Points' },   // how the shared balance is named here
   copy: {},                                          // text overrides for this ecosystem
-  defaults: { theme: 'light', soundPack: 'classic-beep', avatar: 'initials' },  // always owned
+  defaults: { theme: 'dark', soundPack: 'classic-beep', avatar: 'initials' },  // always owned
   themes: [light, dark],                             // order shown in Settings and the Shop
   sounds: [classicBeep],
   avatars: [],                                       // "Initials" is built in and always listed first
@@ -150,6 +150,7 @@ It now appears in the Shop. Once bought, it shows in Settings → Theme.
 | Field | What it does |
 | --- | --- |
 | `appearance` | `'light'` or `'dark'` |
+| `accentable` | `true` lets the user pick the button color in Settings (`ACCENTS` in `src/content/shared.js`, blue by default). It replaces `primary`, `on-primary` and `mode-focus` |
 | `tokens` | the colors. Every component uses these through CSS variables like `var(--primary)`. Never hard-code colors anywhere else |
 | `copy` (optional) | text overrides just for this theme, on top of the ecosystem's `copy` |
 | `stylesheet` (optional) | extra CSS. Write `stylesheet: new URL('./theme.css', import.meta.url).href` and scope **every** rule with `[data-theme="<id>"]` |

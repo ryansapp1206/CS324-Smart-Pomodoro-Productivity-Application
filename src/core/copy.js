@@ -270,6 +270,8 @@ export const BASE_COPY = {
   'set.dailyTime': 'Reminder time',
   'set.appearance': 'Appearance',
   'set.theme': 'Theme',
+  'set.accent': 'Button color',
+  'set.accentChoice': '{name} buttons',
   'set.mode': 'Brainrot mode',
   'set.modeSub': 'Swaps in a whole different set of themes, sounds, profile pictures and wording. Your {currency} balance carries over.',
   'set.reduceMotion': 'Reduce motion',

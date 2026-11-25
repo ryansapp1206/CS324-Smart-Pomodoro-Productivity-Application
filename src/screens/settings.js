@@ -7,7 +7,8 @@
 
 import { escapeHtml } from '../core/utils.js';
 import { icon } from '../core/icons.js';
-import { t, applyTheme, applyReducedMotion, builtThemes, setMode } from '../core/theme-engine.js';
+import { t, applyTheme, applyReducedMotion, builtThemes, setAccent, setMode, activeTheme, themeHasAccent } from '../core/theme-engine.js';
+import { ACCENTS, findAccent } from '../content/shared.js';
 import * as data from '../data/index.js';
 import { DURATION_LIMITS } from '../data/model.js';
 import { equippedId, findShopItem, ownsItem } from '../shop/catalog.js';
@@ -55,8 +56,9 @@ function durationRow(app, key, errors) {
     </div>`;
 }
 
-function themeCard(theme, isSelected) {
-  const colors = THEME_SWATCH_TOKENS.map((token) => theme.tokens[token]);
+function themeCard(theme, isSelected, accentId) {
+  const accent = theme.accentable && findAccent(accentId)[theme.appearance === 'dark' ? 'dark' : 'light'];
+  const colors = THEME_SWATCH_TOKENS.map((token) => (accent && token === 'mode-focus' ? accent.primary : theme.tokens[token]));
   return `
     <button type="button" class="theme-card${isSelected ? ' on' : ''}" data-action="chooseTheme" data-arg="${theme.id}"
       data-focus-id="chooseTheme:${theme.id}" aria-pressed="${isSelected}">
@@ -64,6 +66,26 @@ function themeCard(theme, isSelected) {
       <span class="tc-name">${escapeHtml(theme.name)}</span>
       <span class="tc-desc">${escapeHtml(theme.description)}</span>
     </button>`;
+}
+
+/** Button color picker. Only shown for themes that allow it (`accentable`). */
+function accentPicker(draft) {
+  if (!themeHasAccent()) return '';
+  const appearance = activeTheme().appearance === 'dark' ? 'dark' : 'light';
+  const selected = findAccent(draft.accent).id;
+  const swatches = ACCENTS.map((accent) => {
+    const isSelected = accent.id === selected;
+    return `
+      <button type="button" class="accent-dot${isSelected ? ' on' : ''}" data-action="chooseAccent" data-arg="${accent.id}"
+        data-focus-id="chooseAccent:${accent.id}" aria-pressed="${isSelected}"
+        aria-label="${t('set.accentChoice', { name: accent.name })}" title="${escapeHtml(accent.name)}"
+        style="--dot:${accent[appearance].primary};--dot-on:${accent[appearance].on}">
+        ${isSelected ? icon('check') : ''}
+      </button>`;
+  }).join('');
+  return `
+    <div class="small" style="font-weight:600;margin:10px 0 8px" id="accent-label">${t('set.accent')}</div>
+    <div class="accent-row" role="group" aria-labelledby="accent-label">${swatches}</div>`;
 }
 
 /**
@@ -101,7 +123,7 @@ export function settingsScreen(app) {
 
   const themeCards = builtThemes()
     .filter((theme) => ownsItem(app.data.purchases, 'theme', theme.id))
-    .map((theme) => themeCard(theme, equippedId(draft, 'theme') === theme.id))
+    .map((theme) => themeCard(theme, equippedId(draft, 'theme') === theme.id, draft.accent))
     .join('');
   const soundPack = findShopItem('sound', equippedId(app.settings(), 'sound'));
   const backendName = data.backendKind === 'mock' ? t('set.backendMock') : data.backendKind;
@@ -137,6 +159,7 @@ export function settingsScreen(app) {
     <section class="card">
       <div class="small" style="font-weight:600;margin-bottom:8px" id="theme-label">${t('set.theme')}</div>
       <div class="theme-grid" role="group" aria-labelledby="theme-label">${themeCards}</div>
+      ${accentPicker(draft)}
       <div style="margin:2px 0 4px">
         ${actionButton('openShop', t('currency.moreThemes'), { arg: 'theme', className: 'btn-link', focusId: 'openShop:settings' })}
       </div>
@@ -188,6 +211,14 @@ export const actions = {
     app.ui.settingsDraft.theme = themeId;
     applyTheme(themeId); // live preview; undone on Cancel
     app.ui.focusAfterRender = 'chooseTheme:' + themeId;
+    app.render();
+  },
+
+  chooseAccent(app, accentId) {
+    app.ui.settingsDraft.accent = accentId;
+    setAccent(accentId); // live preview; undone on Cancel
+    applyTheme(equippedId(app.ui.settingsDraft, 'theme'));
+    app.ui.focusAfterRender = 'chooseAccent:' + accentId;
     app.render();
   },
 

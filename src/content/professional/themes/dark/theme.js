@@ -1,4 +1,4 @@
-/* Dark: the Light theme's dark counterpart. */
+/* Dark: the default theme. Easy on the eyes; the Light theme's dark counterpart. */
 
 import { SHARED_TOKENS } from '../../../shared.js';
 
@@ -7,6 +7,7 @@ export default {
   name: 'Dark',
   description: 'Easy on the eyes at night.',
   appearance: 'dark',
+  accentable: true, // primary, on-primary and mode-focus follow the user's button color (settings.accent)
   price: 0,
   tokens: {
     ...SHARED_TOKENS,
@@ -19,8 +20,8 @@ export default {
     'border-strong': '#6a6a75',
     text: '#f1f1f3',
     'text-muted': '#a9a9b3',
-    primary: '#ff7a6b',
-    'on-primary': '#1b0b08',
+    primary: '#7aa7ff',
+    'on-primary': '#0b1530',
     'focus-ring': '#7aa7ff',
     success: '#5bd68a',
     'success-bg': '#15301f',
@@ -31,7 +32,7 @@ export default {
     'on-danger': '#1b0b08',
     info: '#8fb4ff',
     'info-bg': '#17243f',
-    'mode-focus': '#ff7a6b',
+    'mode-focus': '#7aa7ff',
     'mode-short': '#3dd6c3',
     'mode-long': '#a5b0ff',
     'on-mode': '#121214',

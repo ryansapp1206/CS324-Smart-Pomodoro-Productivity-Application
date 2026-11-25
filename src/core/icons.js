@@ -2,7 +2,10 @@
    ICONS
    ===================================================================== */
 
-/* Inline SVG paths (Lucide-style line icons). icon("play") returns the SVG markup. */
+/* Inline SVG paths (Lucide-style line icons). icon("play") returns the SVG markup.
+   Use these instead of unicode symbols (∞, ×, ✓, arrows, …): fonts draw those
+   at different sizes and weights. Give the svg class "i-glyph" to size it like
+   the surrounding text (1em) instead of the fixed 18px icon size. */
 
 export const ICON_PATHS = {
   bat: '<path d="M20.5 3.5a2.12 2.12 0 0 0-3 0L7 14l3 3L20.5 6.5a2.12 2.12 0 0 0 0-3Z"/><path d="m8.5 15.5-4 4"/><circle cx="4" cy="20" r="1"/>',
@@ -48,6 +51,7 @@ export const ICON_PATHS = {
     '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/>',
   info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
   x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  infinity: '<path d="M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4Zm0 0c2 2.67 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.33-6 4Z"/>',
   chevronDown: '<path d="m6 9 6 6 6-6"/>',
   chevronLeft: '<path d="m15 18-6-6 6-6"/>',
   bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',

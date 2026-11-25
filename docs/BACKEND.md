@@ -71,7 +71,7 @@ Dates are `YYYY-MM-DD`; times are ISO 8601 strings in UTC; lengths are in minute
 // Settings
 { durations: { focus: 25, shortBreak: 5, longBreak: 15 },
   alertSound: false, deadlineReminders: true,
-  theme: 'light', soundPack: 'classic-beep', avatar: 'initials',
+  theme: 'dark', soundPack: 'classic-beep', avatar: 'initials',
   mode: 'professional',              // 'professional' | 'brainrot' (which content ecosystem is active)
   sessionAlerts: true, breakAlerts: true, autoStart: false, reduceMotion: false,
   dailyReminder: { enabled: false, time: '09:00' },

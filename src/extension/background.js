@@ -15,7 +15,7 @@
 import { ext } from '../core/platform.js';
 import { scheduler } from '../core/scheduler.js';
 import { storage, STORAGE_KEYS } from '../core/storage.js';
-import { applyTheme, setMode } from '../core/theme-engine.js';
+import { applyTheme, setAccent, setMode } from '../core/theme-engine.js';
 import * as rules from '../timer/rules.js';
 import { loadSettings } from '../services/context.js';
 import {
@@ -36,6 +36,7 @@ scheduler.useAlarms(ext.alarms);
 
 onSettingsLoaded((settings) => {
   setMode(settings.mode);
+  setAccent(settings.accent);
   applyTheme(settings.theme);
 });
 

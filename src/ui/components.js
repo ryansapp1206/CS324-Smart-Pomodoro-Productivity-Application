@@ -172,10 +172,10 @@ export function lastSyncedText(app) {
 
 /* ------------------------------ Currency ------------------------------ */
 
-/** The balance as text, or a glowing infinity sign for an unlimited account. */
+/** The balance as text, or a glowing infinity icon for an unlimited account. */
 export function balanceHtml(app) {
   if (app.hasUnlimitedBalance()) {
-    return `<span class="balance-infinite" aria-hidden="true">∞</span><span class="sr-only">${t('currency.unlimited')}</span>`;
+    return `<span class="balance-infinite" aria-hidden="true">${icon('infinity', 'i i-glyph')}</span><span class="sr-only">${t('currency.unlimited')}</span>`;
   }
   return app.balance().toLocaleString();
 }

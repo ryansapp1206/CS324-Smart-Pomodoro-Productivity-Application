@@ -44,6 +44,7 @@ Every item has `id`, `name`, `description` and `price` (in the shared currency, 
 | Field | What it does |
 | --- | --- |
 | `appearance` | `'light'` or `'dark'` |
+| `accentable` | `true` lets the user pick the button color in Settings (`ACCENTS` in `content/shared.js`, saved as `settings.accent`, blue by default). It replaces `primary`, `on-primary` and `mode-focus`, using the accent's light or dark version to match `appearance`. The professional themes set it; brainrot themes keep their own colors |
 | `tokens` | CSS variable values (`bg`, `primary`, `mode-focus`, …). `professional/themes/light/theme.js` lists every token |
 | `copy` | Optional overrides on top of the ecosystem's `copy` |
 | `decorations` | `{ slot: () => 'html' }` for the slots `header-accent`, `timer-background`, `timer-overlay`, `empty-state-art`, `celebration`, `achievement-badge-frame` |
