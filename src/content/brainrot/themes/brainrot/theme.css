@@ -1,0 +1,8 @@
+/* Brainrot theme-only styles. Every rule is scoped to this theme. */
+
+[data-theme="brainrot"] .logo span {
+  background: linear-gradient(90deg, #6d28d9, #be185d);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
