@@ -67,8 +67,20 @@ export function unlockedAchievementIds(data, today = new Date()) {
   return new Set(ACHIEVEMENTS.filter((a) => progress[a.track] >= a.goal).map((a) => a.id));
 }
 
-/** Balance = earned − spent, never below 0. */
+/**
+ * A purchase with this itemId gives the account an unlimited balance (the
+ * demo account has it). It's shown as an infinity sign and never goes down.
+ */
+export const UNLIMITED_GRANT = 'grant:unlimited';
+export const UNLIMITED_BALANCE = 9999;
+
+export function hasUnlimitedBalance(data) {
+  return (data.purchases || []).some((purchase) => purchase.itemId === UNLIMITED_GRANT);
+}
+
+/** Balance = earned − spent, never below 0 (or UNLIMITED_BALANCE for an unlimited account). */
 export function balanceOf(data, today = new Date()) {
+  if (hasUnlimitedBalance(data)) return UNLIMITED_BALANCE;
   const progress = calculateProgress(data, today);
   const earned =
     progress.sessions * REWARDS.focusSession +

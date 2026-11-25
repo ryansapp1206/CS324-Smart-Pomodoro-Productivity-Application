@@ -169,3 +169,13 @@ export function lastSyncedText(app) {
   else when = formatDate(app.lastSyncedAt, { hour: 'numeric', minute: '2-digit' });
   return t('sync.lastSynced', { when });
 }
+
+/* ------------------------------ Currency ------------------------------ */
+
+/** The balance as text, or a glowing infinity sign for an unlimited account. */
+export function balanceHtml(app) {
+  if (app.hasUnlimitedBalance()) {
+    return `<span class="balance-infinite" aria-hidden="true">∞</span><span class="sr-only">${t('currency.unlimited')}</span>`;
+  }
+  return app.balance().toLocaleString();
+}

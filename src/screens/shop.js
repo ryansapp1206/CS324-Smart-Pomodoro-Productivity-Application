@@ -11,11 +11,11 @@ import { icon } from '../core/icons.js';
 import { t, applyTheme } from '../core/theme-engine.js';
 import * as data from '../data/index.js';
 import { SETTING_FOR_KIND, equippedId, findShopItem, itemKey, ownsItem, shopItems } from '../shop/catalog.js';
-import { playSoundPack } from '../audio/player.js';
+import { previewSoundPack } from '../audio/player.js';
 import { saveChange } from '../app/saving.js';
 import { shareSettings } from '../app/account.js';
 import { createSettingsDraft } from '../app/settings-draft.js';
-import { actionButton, avatarHtml, disabledButton, segmentButton, swatchHtml } from '../ui/components.js';
+import { actionButton, avatarHtml, balanceHtml, disabledButton, segmentButton, swatchHtml } from '../ui/components.js';
 
 /** The Shop's tabs. Items come from the active ecosystem (src/shop/catalog.js). */
 const SHOP_CATEGORIES = [
@@ -39,7 +39,7 @@ export function shopScreen(app) {
   return `
     <div class="shop-bal" data-shop>
       <span class="shop-bal-icon" aria-hidden="true">${icon('coins')}</span>
-      <span><b>${balance.toLocaleString()}</b> ${t('currency.unit')}</span>
+      <span><b>${balanceHtml(app)}</b> ${t('currency.unit')}</span>
       <span class="small muted" style="margin-left:auto">${t('shop.title')}</span>
     </div>
     <div class="seg" role="group" aria-label="${t('shop.cats')}" style="margin-bottom:10px">${tabs}</div>
@@ -97,10 +97,10 @@ export const actions = {
     app.render();
   },
   previewSound(app, packId) {
-    playSoundPack(packId, 'sessionEnd');
+    previewSoundPack(packId);
   },
 
-  /** arg = '<kind>:<id>', e.g. 'sound:tung-tung-drums'. */
+  /** arg = '<kind>:<id>', e.g. 'sound:tung-tung-tung-sahur'. */
   buyItem(app, arg) {
     const [kind, id] = arg.split(':');
     const item = findShopItem(kind, id);
@@ -109,7 +109,9 @@ export const actions = {
 
     app.askConfirm({
       title: t('currency.buy.title', { name: item.name }),
-      body: t('currency.buy.body', { price: item.price, left: balance - item.price }),
+      body: app.hasUnlimitedBalance()
+        ? t('currency.buy.bodyUnlimited', { price: item.price })
+        : t('currency.buy.body', { price: item.price, left: balance - item.price }),
       confirmLabel: t('currency.buy.yes'),
       onConfirm: async () => {
         app.ui.focusAfterRender = item.comingSoon ? 'setShopCategory:' + kind : 'equipItem:' + arg;
@@ -151,7 +153,7 @@ export const actions = {
     });
     if (!result.ok) return;
     if (app.ui.settingsDraft) app.ui.settingsDraft = createSettingsDraft(app.settings());
-    if (kind === 'sound') playSoundPack(id, 'sessionEnd');
+    if (kind === 'sound') previewSoundPack(id);
     app.toast(t('currency.equippedToast', { name: item.name }), 'success');
     app.render();
   },

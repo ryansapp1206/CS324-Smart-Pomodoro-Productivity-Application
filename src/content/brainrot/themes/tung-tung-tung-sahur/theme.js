@@ -63,7 +63,7 @@ export default {
     'notif.dailyBody': 'Tung tung tung. Pick a quest and start a lock-in.',
   },
 
-  // He dances in the "session complete" card (a still frame when Reduce motion is on).
+  // He dances in the card when a focus session completes (a still frame when Reduce motion is on).
   decorations: {
     celebration: () => `
       <img class="sahur-dance" src="${new URL('./dance.webp', import.meta.url).href}" alt="">

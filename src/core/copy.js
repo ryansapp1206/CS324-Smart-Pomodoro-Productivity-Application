@@ -325,6 +325,8 @@ export const BASE_COPY = {
   'currency.buy.title': 'Buy {name}?',
   'currency.buy.body': 'This costs {price} {currency}. You’ll have {left} left.',
   'currency.buy.yes': 'Buy',
+  'currency.buy.bodyUnlimited': 'This costs {price} {currency}. Your balance is unlimited, so it stays the same.',
+  'currency.unlimited': 'Unlimited {currency}',
   'currency.bought': '{name} unlocked.',
   'currency.boughtSoon': '{name} unlocked. It arrives in a future update.',
   'currency.equippedToast': '{name} equipped.',

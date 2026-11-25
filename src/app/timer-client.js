@@ -109,7 +109,7 @@ function showSessionAlert(app, alert) {
 
   if (alertsOn) {
     const iconName = alert.finishedMode === 'focus' ? 'check' : 'timer';
-    app.alert = { id: alert.id, title, body, primaryLabel, icon: iconName };
+    app.alert = { id: alert.id, title, body, primaryLabel, icon: iconName, celebrate: alert.finishedMode === 'focus' };
   } else {
     app.toast(`${title} ${body}`);
     markAlertSeen();

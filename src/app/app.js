@@ -16,7 +16,7 @@
 import { t } from '../core/theme-engine.js';
 import { makeId, fromDayKey } from '../core/utils.js';
 import { DEFAULT_SETTINGS } from '../data/model.js';
-import { ACHIEVEMENTS, REWARDS, balanceOf, unlockedAchievementIds } from '../shop/progress.js';
+import { ACHIEVEMENTS, REWARDS, balanceOf, hasUnlimitedBalance, unlockedAchievementIds } from '../shop/progress.js';
 import { createIdleTimer } from '../timer/rules.js';
 import { createUiState, taskFormSnapshot } from './state.js';
 import { createSettingsDraft, hasUnsavedSettings } from './settings-draft.js';
@@ -99,6 +99,10 @@ export class App {
   /** Currency balance (called points, aura, … depending on the theme). */
   balance() {
     return this.data ? balanceOf(this.data) : 0;
+  }
+
+  hasUnlimitedBalance() {
+    return Boolean(this.data && hasUnlimitedBalance(this.data));
   }
 
   /* ------------------------------- Feedback ------------------------------- */

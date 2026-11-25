@@ -61,9 +61,10 @@ Rules for every theme:
 
 - `icon` is the picture in the Shop (a name from `src/core/icons.js`).
 - A pack has **either** `files` or `notes`, and the event is `'sessionEnd'` or `'breakEnd'` in both cases:
-  - `files: { sessionEnd, breakEnd }` plays recorded audio kept next to the file, e.g. `new URL('./clip.mp3', import.meta.url).href`. See `brainrot/sounds/tung-tung-tung-sahur.js`.
+  - `files: { sessionEnd, breakEnd, default }` plays recorded audio kept next to the file, e.g. `new URL('./clip.mp3', import.meta.url).href`. `default` plays for any event without its own file. Optional `preview: ['sessionEnd', 'default']` sets what the Shop's preview plays, in order. See `brainrot/sounds/tung-tung-tung-sahur.js`.
   - `notes(event)` returns notes to synthesize. A note is `{ frequency, slideTo?, startAt?, duration?, wave?, volume? }`, played by `src/audio/player.js`.
 - Keep clips short (a few seconds) and small.
+- Brainrot has one sound pack per theme or character.
 
 ## Profile pictures
 

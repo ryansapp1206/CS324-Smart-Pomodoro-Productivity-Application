@@ -56,23 +56,38 @@ function findSoundPack(packId) {
   return sounds.find((candidate) => candidate.id === packId) || sounds.find((candidate) => candidate.id === defaults.soundPack);
 }
 
-/** Play an audio file (for packs with recorded sounds). */
+/** Play an audio file. Resolves when it finishes (or fails). */
 function playFile(url) {
-  try {
-    const audio = new Audio(url);
-    audio.play().catch(() => {}); // blocked until the user has clicked something on the page
-  } catch {
-    /* no audio support */
-  }
+  return new Promise((resolve) => {
+    try {
+      const audio = new Audio(url);
+      audio.addEventListener('ended', resolve);
+      audio.addEventListener('error', resolve);
+      audio.play().catch(resolve); // blocked until the user has clicked something on the page
+    } catch {
+      resolve(); // no audio support
+    }
+  });
 }
 
 /**
  * Play a sound pack. event: 'sessionEnd' | 'breakEnd'.
- * A pack either has `files` (recorded audio, one per event) or `notes` (synthesized).
+ * A pack has either `files` (recorded audio: one per event, plus `default`
+ * for any event without its own file) or `notes` (synthesized).
  */
 export function playSoundPack(packId, event = 'sessionEnd') {
   const pack = findSoundPack(packId);
-  const file = pack.files && (pack.files[event] || pack.files.sessionEnd);
+  if (!pack.files) return playNotes(pack.notes(event));
+  const file = pack.files[event] || pack.files.default;
   if (file) playFile(file);
-  else playNotes(pack.notes(event));
+}
+
+/** The Shop's preview: the pack's `preview` events one after the other, or just 'sessionEnd'. */
+export async function previewSoundPack(packId) {
+  const pack = findSoundPack(packId);
+  if (!pack.files) return playNotes(pack.notes('sessionEnd'));
+  for (const event of pack.preview || ['sessionEnd']) {
+    const file = pack.files[event] || pack.files.default;
+    if (file) await playFile(file);
+  }
 }

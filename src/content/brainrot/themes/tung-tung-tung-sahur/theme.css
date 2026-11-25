@@ -12,8 +12,8 @@
   );
 }
 
-/* Session-complete card: the dancing animation takes the icon's place. */
-[data-theme="tung-tung-tung-sahur"] .alert-card .alert-icon {
+/* Focus-complete card: the dancing animation takes the icon's place. */
+[data-theme="tung-tung-tung-sahur"] .alert-card:has(.deco-celebration) .alert-icon {
   display: none;
 }
 [data-theme="tung-tung-tung-sahur"] .alert-card .deco-celebration {

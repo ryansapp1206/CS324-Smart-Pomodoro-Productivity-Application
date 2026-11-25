@@ -67,7 +67,7 @@ src/content/
       sigma-grindset/theme.js      (coming soon)
       …
     sounds/
-      tung-tung-drums.js …
+      tung-tung-tung-sahur.js (+ .mp3 files) …
     avatars/
       tung-tung-tung-sahur.js …
 ```
@@ -288,9 +288,10 @@ export default {
   price: 200,
   icon: 'music',
   files: {
-    sessionEnd: new URL('./finish.mp3', import.meta.url).href,
-    breakEnd: new URL('./break.mp3', import.meta.url).href,
+    sessionEnd: new URL('./finish.mp3', import.meta.url).href,   // focus session complete
+    default: new URL('./other.mp3', import.meta.url).href,       // every other sound (break ends, …)
   },
+  preview: ['sessionEnd', 'default'],   // what the Shop's preview plays, in order
 };
 ```
 
