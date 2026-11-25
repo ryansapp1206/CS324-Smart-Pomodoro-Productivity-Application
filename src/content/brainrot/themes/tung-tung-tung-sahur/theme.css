@@ -1,0 +1,13 @@
+/* Tung Tung Tung Sahur theme-only styles: a faint wood grain on the header
+   and tab bar. Every rule is scoped to this theme. */
+
+[data-theme="tung-tung-tung-sahur"] .hdr,
+[data-theme="tung-tung-tung-sahur"] .tabbar {
+  background-image: repeating-linear-gradient(
+    100deg,
+    rgba(139, 69, 19, 0.045) 0 2px,
+    transparent 2px 9px,
+    rgba(139, 69, 19, 0.03) 9px 10px,
+    transparent 10px 17px
+  );
+}

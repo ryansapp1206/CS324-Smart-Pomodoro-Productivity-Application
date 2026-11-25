@@ -1,11 +1,12 @@
-/* Tung Tung Tung Sahur profile picture: an icon badge (original, no character art).
-   To use real art later, add an image file next to this one and set `image`. */
+/* Tung Tung Tung Sahur profile picture: a wooden bat on a wood-colored badge
+   (an icon, not character art). To use real art later, add an image file
+   next to this one that the team has the rights to, and set `image`. */
 
 export default {
   id: 'tung-tung-tung-sahur',
   name: 'Tung Tung Tung Sahur',
-  description: 'Wakes you up. Will not stop.',
+  description: 'Has a bat. Wakes you up. Will not stop.',
   price: 100,
-  icon: 'drum', // from src/core/icons.js
-  color: '#c68642', // badge background
+  icon: 'bat', // from src/core/icons.js
+  color: '#d9a066', // badge background (light wood, so the dark icon reads)
 };
