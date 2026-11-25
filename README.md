@@ -1,22 +1,16 @@
-# Brainrot Pomodoro
+# Pomodoro Productivity Tool
+This application has a web interface allowing you to take control of your productivity.
 
-A brainrot-themed Pomodoro productivity app, built as a Chromium browser extension.
-CS 324 Software Engineering project by team **RAM Ranch** (Ryan, Cashton, Thaddeus, Abel).
+Yet to be completed
+a) Browser app
+b) Chromium browser extension
+c) Firefox (and Gecko based) browser extension
+d) Local network HTTP (sync between browsers and devices)
+maybe) The browser app could theoretically be given full mobile support on iOS and Android (as a web app, accessible via homescreen)
 
-## Interactive prototype
-
-**Live prototype:** https://ryansapp1206.github.io/cs324---Smart-Pomodoro-Productivity-Application/
-
+Currently completed
+Live prototype being hosted via GitHub pages
+https://ryansapp1206.github.io/cs324
 Demo login: `tungtung@ramranch.app` / `pomodoro123` (or click "Fill in demo account" on the login screen).
 
-The "Prototype controls" panel on the right is not part of the app. It speeds up the timer, simulates sync
-failures, opens a second device, switches accounts and themes, and opens a screen gallery of every screen for screenshots.
-
-## Repository layout
-
-```
-design/prototype/   source for the interactive prototype (see its README)
-```
-
-The hosted prototype lives on the `gh-pages` branch, which only contains the built `index.html`.
-GitHub Pages serves that branch, so `main` stays free for the extension code and project documentation.
+A project for CS 324.
