@@ -5,26 +5,31 @@
      user for permission the first time they press Start.
    - The tab title shows the time left ("24:13 · Focus"), so it's visible
      from other tabs.
+   - In the extension, the background shows notifications with the
+     extension notifications API instead (no permission prompt needed).
    ===================================================================== */
 
 import { formatClock } from '../core/utils.js';
 import { t } from '../core/theme-engine.js';
 import { plainText } from '../timer/messages.js';
 import * as rules from '../timer/rules.js';
+import { ext, IS_EXTENSION } from '../core/platform.js';
 
 const ICON = 'icons/icon128.png';
 
 export function notificationsSupported() {
-  return typeof Notification !== 'undefined';
+  return IS_EXTENSION ? Boolean(ext.notifications) : typeof Notification !== 'undefined';
 }
 
-/** Ask once (must be called from a click). Does nothing if already allowed or blocked. */
+/** Ask once (must be called from a click). Does nothing if already allowed or blocked. The extension never needs to ask. */
 export function requestNotificationPermission() {
+  if (IS_EXTENSION) return;
   if (notificationsSupported() && Notification.permission === 'default') Notification.requestPermission();
 }
 
 /** A system notification. A newer one with the same `tag` replaces the older one. */
 export function showNotification(tag, title, message) {
+  if (IS_EXTENSION) return showExtensionNotification(tag, title, message);
   if (!notificationsSupported() || Notification.permission !== 'granted') return;
   try {
     const notification = new Notification(plainText(title), { body: plainText(message), icon: ICON, tag });
@@ -35,6 +40,13 @@ export function showNotification(tag, title, message) {
   } catch (error) {
     console.warn('[notify] could not show notification', error);
   }
+}
+
+function showExtensionNotification(tag, title, message) {
+  if (!ext.notifications) return;
+  ext.notifications
+    .create(tag, { type: 'basic', iconUrl: ext.runtime.getURL(ICON), title: plainText(title), message: plainText(message) })
+    .catch((error) => console.warn('[notify] could not show notification', error));
 }
 
 /** "24:13 · Focus · Pomodoro" while a session runs, the app name otherwise (both from the theme's text). */
