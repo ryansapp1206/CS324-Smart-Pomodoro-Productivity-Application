@@ -21,6 +21,7 @@ import { createIdleTimer } from '../timer/rules.js';
 import { createUiState, taskFormSnapshot } from './state.js';
 import { createSettingsDraft, hasUnsavedSettings } from './settings-draft.js';
 import { applyAppearance } from './account.js';
+import { playSound } from '../services/sound.js';
 import { renderApp, renderToasts } from './render.js';
 
 const PRIORITY_ORDER = { High: 0, Medium: 1, Low: 2 };
@@ -132,6 +133,7 @@ export class App {
   /** Toast every achievement unlocked since `before` (a Set of ids). */
   celebrateNewAchievements(before) {
     const after = this.achievementIds();
+    if ([...after].some((id) => !before.has(id))) playSound('achievement');
     for (const achievement of ACHIEVEMENTS) {
       if (after.has(achievement.id) && !before.has(achievement.id)) {
         const name = t('ach.' + achievement.id);

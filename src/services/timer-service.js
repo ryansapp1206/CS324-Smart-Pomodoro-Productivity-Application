@@ -10,7 +10,8 @@ import { storage, STORAGE_KEYS } from '../core/storage.js';
 import * as rules from '../timer/rules.js';
 import { sessionEndMessage } from '../timer/messages.js';
 import { loadSettings } from './context.js';
-import { playAlert, showNotification, updateTabTitle } from './notify.js';
+import { showNotification, updateTabTitle } from './notify.js';
+import { playSound } from './sound.js';
 import { queueSession } from './session-queue.js';
 
 let sessionEndTimer = null;
@@ -100,7 +101,11 @@ async function finishSession(timer, settings) {
     const { title, body } = sessionEndMessage(alert);
     showNotification('session-end', title, body);
   }
-  if (endedRecently && settings.alertSound) playAlert(settings.soundPack, result.finishedMode === 'focus' ? 'sessionEnd' : 'breakEnd');
+  if (endedRecently) {
+    let event = 'breakEnd';
+    if (result.finishedMode === 'focus') event = result.nextMode === 'long' ? 'setComplete' : 'sessionEnd';
+    playSound(event);
+  }
   if (result.session) await queueSession(result.session);
   return result.timer;
 }

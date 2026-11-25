@@ -60,9 +60,22 @@ Rules for every theme:
 ## Sound packs
 
 - `icon` is the picture in the Shop (a name from `src/core/icons.js`).
-- A pack has **either** `files` or `notes`, and the event is `'sessionEnd'` or `'breakEnd'` in both cases:
-  - `files: { sessionEnd, breakEnd, default }` plays recorded audio kept next to the file, e.g. `new URL('./clip.mp3', import.meta.url).href`. `default` plays for any event without its own file. Optional `preview: ['sessionEnd', 'default']` sets what the Shop's preview plays, in order. See `brainrot/sounds/tung-tung-tung-sahur.js`.
-  - `notes(event)` returns notes to synthesize. A note is `{ frequency, slideTo?, startAt?, duration?, wave?, volume? }`, played by `src/audio/player.js`.
+- A pack decides how **every sound in the app** sounds. The events (`SOUND_EVENTS` in `src/audio/player.js`):
+
+  | Event | When it plays |
+  | --- | --- |
+  | `sessionEnd` | a focus session finished |
+  | `setComplete` | the 4th focus session in a row finished (long break earned) |
+  | `achievement` | an achievement unlocked |
+  | `breakEnd` | a break finished |
+  | `smallWin` | a task completed, or an item bought or equipped |
+  | `stopEarly` | a session was stopped or reset before the end |
+
+- A pack has **either** `files` or `notes`:
+  - **`files`** plays recorded audio kept next to the pack's file, e.g. `{ sessionEnd: new URL('./clip.mp3', import.meta.url).href, …, default }`. `default` plays for any event without its own file. Optional `preview: ['sessionEnd', 'default']` sets what the Shop's preview plays, in order. See `brainrot/sounds/tung-tung-tung-sahur.js`.
+  - **`notes(event)`** returns notes to synthesize. A note is `{ frequency, slideTo?, startAt?, duration?, wave?, volume? }`. `events: [...]` lists the events the pack has its own sound for. Others fall back: `setComplete` and `achievement` use `sessionEnd`, `stopEarly` uses `breakEnd`, and `smallWin` is silent. See `professional/sounds/classic-beep.js`.
+- Buying a sound pack plays its `sessionEnd` sound.
+- Nothing plays unless the **Sound** setting is on. App code plays sounds only through `playSound(event)` in `src/services/sound.js`.
 - Keep clips short (a few seconds) and small.
 - Brainrot has one sound pack per theme or character.
 

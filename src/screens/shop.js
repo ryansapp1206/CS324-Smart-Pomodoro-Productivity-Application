@@ -11,7 +11,8 @@ import { icon } from '../core/icons.js';
 import { t, applyTheme } from '../core/theme-engine.js';
 import * as data from '../data/index.js';
 import { SETTING_FOR_KIND, equippedId, findShopItem, itemKey, ownsItem, shopItems } from '../shop/catalog.js';
-import { previewSoundPack } from '../audio/player.js';
+import { playPackEvent, previewSoundPack } from '../audio/player.js';
+import { playSound } from '../services/sound.js';
 import { saveChange } from '../app/saving.js';
 import { shareSettings } from '../app/account.js';
 import { createSettingsDraft } from '../app/settings-draft.js';
@@ -119,6 +120,9 @@ export const actions = {
           remote: async () => app.data.purchases.push(await data.purchase(arg, item.price)),
         });
         if (!result.ok) return;
+        // Buying a sound pack plays its own signature sound; anything else is a small win.
+        if (kind === 'sound') playPackEvent(id, 'sessionEnd');
+        else playSound('smallWin');
         const message = item.comingSoon ? t('currency.boughtSoon', { name: item.name }) : t('currency.bought', { name: item.name });
         app.toast(message, 'success', 'coins');
         app.render();
@@ -154,6 +158,7 @@ export const actions = {
     if (!result.ok) return;
     if (app.ui.settingsDraft) app.ui.settingsDraft = createSettingsDraft(app.settings());
     if (kind === 'sound') previewSoundPack(id);
+    else playSound('smallWin');
     app.toast(t('currency.equippedToast', { name: item.name }), 'success');
     app.render();
   },

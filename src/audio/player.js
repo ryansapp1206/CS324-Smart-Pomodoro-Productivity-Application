@@ -1,9 +1,10 @@
 /* =====================================================================
    SOUND PLAYER
    Plays a sound pack: recorded audio files if the pack has `files`,
-   otherwise its `notes` synthesized with the Web Audio API.
-   Used for Shop previews and session-end alerts. Sound packs live in
-   the active ecosystem (src/content/<mode>/sounds/).
+   otherwise its `notes` synthesized with the Web Audio API. Sound packs
+   live in the active ecosystem (src/content/<mode>/sounds/), so brainrot
+   sounds can only play in brainrot mode. To play a sound from app code,
+   use playSound() in src/services/sound.js (it checks the Sound setting).
    ===================================================================== */
 
 import { activeEcosystem } from '../core/theme-engine.js';
@@ -50,44 +51,93 @@ export function playNotes(notes) {
   }
 }
 
+/* ------------------------------ Sound events ------------------------------
+   Every sound the app makes is one of these events. A sound pack decides
+   what each one sounds like, so equipping a pack changes all of them.
+   Priority: a less important sound is skipped while a more important one
+   plays; otherwise the new sound replaces the one playing. The same clip
+   is never restarted, so a set completing and an achievement unlocking at
+   the same moment play the choir once. */
+
+export const SOUND_EVENTS = {
+  sessionEnd: 2, // a focus session finished
+  setComplete: 3, // the 4th focus session in a row finished (long break earned)
+  achievement: 3, // an achievement unlocked
+  breakEnd: 1, // a break finished
+  smallWin: 1, // task done, item bought or equipped
+  stopEarly: 2, // a session was stopped or reset before the end
+};
+
+/**
+ * For packs that synthesize notes and only define some events: which
+ * event's sound to use instead (smallWin has no stand-in, so it's silent).
+ */
+const NOTES_FALLBACK = { setComplete: 'sessionEnd', achievement: 'sessionEnd', stopEarly: 'breakEnd' };
+
 /** The pack with this id in the active ecosystem, or the ecosystem's default pack. */
 function findSoundPack(packId) {
   const { sounds, defaults } = activeEcosystem();
   return sounds.find((candidate) => candidate.id === packId) || sounds.find((candidate) => candidate.id === defaults.soundPack);
 }
 
-/** Play an audio file. Resolves when it finishes (or fails). */
-function playFile(url) {
+let current = null; // { audio, priority, url } of the file playing now
+
+/** Play an audio file. Resolves when it finishes (or fails or is interrupted). */
+function playFile(url, priority = 1) {
   return new Promise((resolve) => {
     try {
       const audio = new Audio(url);
-      audio.addEventListener('ended', resolve);
-      audio.addEventListener('error', resolve);
-      audio.play().catch(resolve); // blocked until the user has clicked something on the page
+      const done = () => {
+        if (current && current.audio === audio) current = null;
+        resolve();
+      };
+      audio.addEventListener('ended', done);
+      audio.addEventListener('error', done);
+      audio.addEventListener('pause', done);
+      current = { audio, priority, url };
+      audio.play().catch(done); // blocked until the user has clicked something on the page
     } catch {
       resolve(); // no audio support
     }
   });
 }
 
+function playNotesFor(pack, event) {
+  const handled = pack.events || ['sessionEnd', 'breakEnd'];
+  const use = handled.includes(event) ? event : NOTES_FALLBACK[event];
+  if (use) playNotes(pack.notes(use));
+}
+
 /**
- * Play a sound pack. event: 'sessionEnd' | 'breakEnd'.
- * A pack has either `files` (recorded audio: one per event, plus `default`
- * for any event without its own file) or `notes` (synthesized).
+ * Play one event from a pack. A pack has either `files` (recorded audio:
+ * one per event, plus `default` for events without their own file) or
+ * `notes(event)` (synthesized; `events` lists the ones it handles).
  */
-export function playSoundPack(packId, event = 'sessionEnd') {
+export function playPackEvent(packId, event) {
   const pack = findSoundPack(packId);
-  if (!pack.files) return playNotes(pack.notes(event));
-  const file = pack.files[event] || pack.files.default;
-  if (file) playFile(file);
+  const priority = SOUND_EVENTS[event] || 1;
+  const file = pack.files && (pack.files[event] || pack.files.default);
+  if (current && !current.audio.ended) {
+    if (current.priority > priority) return; // something more important is playing
+    if (file && current.url === file) return; // this exact clip is already playing
+    current.audio.pause(); // the new sound replaces it
+  }
+  if (!pack.files) return playNotesFor(pack, event);
+  if (file) playFile(file, priority);
+}
+
+/** Kept for older callers: same as playPackEvent. */
+export function playSoundPack(packId, event = 'sessionEnd') {
+  playPackEvent(packId, event);
 }
 
 /** The Shop's preview: the pack's `preview` events one after the other, or just 'sessionEnd'. */
 export async function previewSoundPack(packId) {
   const pack = findSoundPack(packId);
-  if (!pack.files) return playNotes(pack.notes('sessionEnd'));
+  if (current) current.audio.pause();
+  if (!pack.files) return playNotesFor(pack, 'sessionEnd');
   for (const event of pack.preview || ['sessionEnd']) {
     const file = pack.files[event] || pack.files.default;
-    if (file) await playFile(file);
+    if (file) await playFile(file, 3);
   }
 }

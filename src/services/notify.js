@@ -1,5 +1,5 @@
 /* =====================================================================
-   NOTIFICATIONS, SOUND AND TAB TITLE
+   NOTIFICATIONS AND TAB TITLE
    - Notifications use the browser's Notification API, so they show even
      when the tab is in the background (but open). The browser asks the
      user for permission the first time they press Start.
@@ -9,7 +9,6 @@
 
 import { formatClock } from '../core/utils.js';
 import { t } from '../core/theme-engine.js';
-import { playSoundPack } from '../audio/player.js';
 import { plainText } from '../timer/messages.js';
 import * as rules from '../timer/rules.js';
 
@@ -36,11 +35,6 @@ export function showNotification(tag, title, message) {
   } catch (error) {
     console.warn('[notify] could not show notification', error);
   }
-}
-
-/** event: 'sessionEnd' | 'breakEnd'. */
-export function playAlert(soundPackId, event) {
-  playSoundPack(soundPackId, event);
 }
 
 /** "24:13 · Focus · Pomodoro" while a session runs, the app name otherwise (both from the theme's text). */

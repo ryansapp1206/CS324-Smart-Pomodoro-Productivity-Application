@@ -276,6 +276,23 @@ A pack is either a list of **notes synthesized in the browser** (no audio files)
 
 **Try it:** open the Shop, go to Sound packs, and press the speaker button next to the pack. You don't have to buy it to preview it.
 
+### Sound events
+
+A sound pack decides how **every sound in the app** sounds, so equipping one changes all of them. In brainrot mode only brainrot packs exist, so brainrot sounds can never play in professional mode.
+
+| Event | When it plays |
+| --- | --- |
+| `sessionEnd` | a focus session finished |
+| `setComplete` | the 4th focus session in a row finished (long break earned) |
+| `achievement` | an achievement unlocked |
+| `breakEnd` | a break finished |
+| `smallWin` | a task completed, or an item bought or equipped |
+| `stopEarly` | a session was stopped or reset before the end |
+
+- **Note packs:** list the events they handle in `events: [...]`. Unlisted events fall back: `setComplete` and `achievement` use `sessionEnd`, `stopEarly` uses `breakEnd`, and `smallWin` is silent.
+- **Bigger moments win:** a more important sound interrupts a smaller one, and a session end plus an achievement at the same moment play only once.
+- **The Sound setting:** nothing plays unless it's on.
+
 ### Use recorded audio instead
 
 Put short `.mp3` files next to the pack's `.js` file, and use `files` instead of `notes`:
@@ -289,7 +306,8 @@ export default {
   icon: 'music',
   files: {
     sessionEnd: new URL('./finish.mp3', import.meta.url).href,   // focus session complete
-    default: new URL('./other.mp3', import.meta.url).href,       // every other sound (break ends, …)
+    setComplete: new URL('./big-win.mp3', import.meta.url).href, // any event can have its own file
+    default: new URL('./other.mp3', import.meta.url).href,       // every event without its own file
   },
   preview: ['sessionEnd', 'default'],   // what the Shop's preview plays, in order
 };
