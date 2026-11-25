@@ -9,7 +9,7 @@ import { icon } from '../core/icons.js';
 import { t, decoration } from '../core/theme-engine.js';
 import { ACHIEVEMENTS, REWARDS, calculateProgress, unlockedAchievementIds } from '../shop/progress.js';
 import { sendTimerCommand } from '../app/timer-client.js';
-import { actionButton } from '../ui/components.js';
+import { actionButton, balanceHtml } from '../ui/components.js';
 
 const minutesOn = (sessions, dayKey) =>
   sessions.filter((session) => toDayKey(session.startedAt) === dayKey).reduce((total, session) => total + session.durationMinutes, 0);
@@ -21,7 +21,7 @@ function balanceCard(app) {
       <span class="balance-icon" aria-hidden="true">${icon('coins')}</span>
       <div class="grow">
         <div class="small muted">${t('currency.balance')}</div>
-        <div class="balance-v">${app.balance().toLocaleString()}</div>
+        <div class="balance-v">${balanceHtml(app)}</div>
       </div>
       ${actionButton('openShop', t('currency.openShop'), { className: 'btn btn-sm', icon: 'bag', focusId: 'openShop:card' })}
     </section>

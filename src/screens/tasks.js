@@ -12,6 +12,7 @@ import { REWARDS } from '../shop/progress.js';
 import { saveChange } from '../app/saving.js';
 import { shareSettings } from '../app/account.js';
 import { sendTimerCommand } from '../app/timer-client.js';
+import { playSound } from '../services/sound.js';
 import { actionButton, segmentButton, sessionCountBadge, taskMeta } from '../ui/components.js';
 import { openTaskForm } from './task-form.js';
 
@@ -213,6 +214,7 @@ export const actions = {
     const result = await updateTask(app, task, { completed: true, completedAt: nowIso() });
     if (!result.ok) return;
     if (app.timer.taskId === taskId) sendTimerCommand(app, 'setTask', null);
+    playSound('smallWin');
     const message = `${t('tasks.doneToast', { title: task.title })} ${t('currency.earned', { n: REWARDS.taskDone })}`;
     app.toast(message, 'success', 'check');
     app.celebrateNewAchievements(achievementsBefore);

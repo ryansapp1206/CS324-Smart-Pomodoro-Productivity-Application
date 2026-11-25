@@ -67,7 +67,7 @@ src/content/
       sigma-grindset/theme.js      (coming soon)
       …
     sounds/
-      tung-tung-drums.js …
+      tung-tung-tung-sahur.js (+ .mp3 files) …
     avatars/
       tung-tung-tung-sahur.js …
 ```
@@ -153,7 +153,7 @@ It now appears in the Shop. Once bought, it shows in Settings → Theme.
 | `tokens` | the colors. Every component uses these through CSS variables like `var(--primary)`. Never hard-code colors anywhere else |
 | `copy` (optional) | text overrides just for this theme, on top of the ecosystem's `copy` |
 | `stylesheet` (optional) | extra CSS. Write `stylesheet: new URL('./theme.css', import.meta.url).href` and scope **every** rule with `[data-theme="<id>"]` |
-| `decorations` (optional) | small HTML extras in fixed slots: `header-accent`, `timer-background`, `timer-overlay`, `empty-state-art`, `celebration`, `achievement-badge-frame` |
+| `decorations` (optional) | small HTML extras in fixed slots: `header-accent`, `timer-background`, `timer-overlay`, `empty-state-art`, `celebration` (the session-complete card), `achievement-badge-frame`. See the Tung Tung Tung Sahur theme's dancing celebration |
 | `comingSoon` + `swatch` | sell a theme before it's built (below) |
 
 ### The color tokens
@@ -225,13 +225,19 @@ The professional ecosystem has no PFPs yet. Its `avatars: []` is ready for them;
 
 Edit `icon`, `color`, `name`, `description` or `price`. Never change `id`.
 
-**Real artwork later:** put the image next to the file, add `image: new URL('./rocket.png', import.meta.url).href`, and update `avatarHtml()` in `src/ui/components.js`. That's the one place that draws PFPs.
+**Use a photo instead of an icon:** crop the image square (about 160×160; `.webp` or `.png`) and put it next to the file. Then add:
+
+```js
+image: new URL('./rocket.webp', import.meta.url).href,
+```
+
+It fills the circle everywhere the PFP appears. `icon` and `color` stay as the fallback. `brainrot/avatars/tung-tung-tung-sahur.js` is an example.
 
 ---
 
 ## 5. Sound packs
 
-Sounds are **synthesized in the browser**, so there are no audio files. A pack is a list of notes.
+A pack is either a list of **notes synthesized in the browser** (no audio files), or a pair of **recorded audio files** (see the end of this section).
 
 ### Add a sound pack
 
@@ -270,7 +276,44 @@ Sounds are **synthesized in the browser**, so there are no audio files. A pack i
 
 **Try it:** open the Shop, go to Sound packs, and press the speaker button next to the pack. You don't have to buy it to preview it.
 
-**Real audio files later:** add a `file` field and teach `src/audio/player.js` to play it. That's the one place that plays sounds.
+### Sound events
+
+A sound pack decides how **every sound in the app** sounds, so equipping one changes all of them. In brainrot mode only brainrot packs exist, so brainrot sounds can never play in professional mode.
+
+| Event | When it plays |
+| --- | --- |
+| `sessionEnd` | a focus session finished |
+| `setComplete` | the 4th focus session in a row finished (long break earned) |
+| `achievement` | an achievement unlocked |
+| `breakEnd` | a break finished |
+| `smallWin` | a task completed, or an item bought or equipped |
+| `stopEarly` | a session was stopped or reset before the end |
+
+- **Note packs:** list the events they handle in `events: [...]`. Unlisted events fall back: `setComplete` and `achievement` use `sessionEnd`, `stopEarly` uses `breakEnd`, and `smallWin` is silent.
+- **Bigger moments win:** a more important sound interrupts a smaller one, and a session end plus an achievement at the same moment play only once.
+- **The Sound setting:** nothing plays unless it's on.
+
+### Use recorded audio instead
+
+Put short `.mp3` files next to the pack's `.js` file, and use `files` instead of `notes`:
+
+```js
+export default {
+  id: 'my-clip-pack',
+  name: 'My Clip Pack',
+  description: '…',
+  price: 200,
+  icon: 'music',
+  files: {
+    sessionEnd: new URL('./finish.mp3', import.meta.url).href,   // focus session complete
+    setComplete: new URL('./big-win.mp3', import.meta.url).href, // any event can have its own file
+    default: new URL('./other.mp3', import.meta.url).href,       // every event without its own file
+  },
+  preview: ['sessionEnd', 'default'],   // what the Shop's preview plays, in order
+};
+```
+
+Keep clips to a few seconds, and only use audio you're allowed to use. `brainrot/sounds/tung-tung-tung-sahur.js` is an example.
 
 ---
 

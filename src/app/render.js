@@ -66,7 +66,7 @@ export function renderToasts(app) {
       : actionButton('dismissAlert', t('alert.ok'), { className: 'btn btn-mode btn-sm', focusId: 'dismissAlert:ok' });
     html += `
       <div class="alert-card" role="alertdialog" aria-labelledby="alert-title" aria-describedby="alert-body">
-        ${decoration('celebration')}
+        ${alert.celebrate ? decoration('celebration') : ''}
         <div class="alert-icon" aria-hidden="true">${icon(alert.icon)}</div>
         <div style="flex:1">
           <div class="alert-title" id="alert-title">${alert.title}</div>

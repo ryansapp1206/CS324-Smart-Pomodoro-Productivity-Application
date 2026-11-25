@@ -1,0 +1,48 @@
+/* Tung Tung Tung Sahur theme-only styles. Every rule is scoped to this theme. */
+
+/* A faint wood grain on the header and tab bar. */
+[data-theme="tung-tung-tung-sahur"] .hdr,
+[data-theme="tung-tung-tung-sahur"] .tabbar {
+  background-image: repeating-linear-gradient(
+    100deg,
+    rgba(139, 69, 19, 0.045) 0 2px,
+    transparent 2px 9px,
+    rgba(139, 69, 19, 0.03) 9px 10px,
+    transparent 10px 17px
+  );
+}
+
+/* Focus-complete card: the dancing animation takes the icon's place. */
+[data-theme="tung-tung-tung-sahur"] .alert-card:has(.deco-celebration) .alert-icon {
+  display: none;
+}
+[data-theme="tung-tung-tung-sahur"] .alert-card .deco-celebration {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
+}
+[data-theme="tung-tung-tung-sahur"] .deco-celebration img {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+}
+[data-theme="tung-tung-tung-sahur"] .sahur-dance-still {
+  display: none;
+}
+
+/* Reduce motion (the app setting or the system setting): show the still frame. */
+[data-reduce-motion="true"][data-theme="tung-tung-tung-sahur"] .sahur-dance {
+  display: none;
+}
+[data-reduce-motion="true"][data-theme="tung-tung-tung-sahur"] .sahur-dance-still {
+  display: block;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="tung-tung-tung-sahur"] .sahur-dance {
+    display: none;
+  }
+  [data-theme="tung-tung-tung-sahur"] .sahur-dance-still {
+    display: block;
+  }
+}

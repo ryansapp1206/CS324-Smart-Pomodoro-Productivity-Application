@@ -60,9 +60,25 @@ Rules for every theme:
 ## Sound packs
 
 - `icon` is the picture in the Shop (a name from `src/core/icons.js`).
-- `notes(event)` returns the notes to play, where `event` is `'sessionEnd'` or `'breakEnd'`.
-- A note is `{ frequency, slideTo?, startAt?, duration?, wave?, volume? }`, synthesized by `src/audio/player.js`.
+- A pack decides how **every sound in the app** sounds. The events (`SOUND_EVENTS` in `src/audio/player.js`):
+
+  | Event | When it plays |
+  | --- | --- |
+  | `sessionEnd` | a focus session finished |
+  | `setComplete` | the 4th focus session in a row finished (long break earned) |
+  | `achievement` | an achievement unlocked |
+  | `breakEnd` | a break finished |
+  | `smallWin` | a task completed, or an item bought or equipped |
+  | `stopEarly` | a session was stopped or reset before the end |
+
+- A pack has **either** `files` or `notes`:
+  - **`files`** plays recorded audio kept next to the pack's file, e.g. `{ sessionEnd: new URL('./clip.mp3', import.meta.url).href, …, default }`. `default` plays for any event without its own file. Optional `preview: ['sessionEnd', 'default']` sets what the Shop's preview plays, in order. See `brainrot/sounds/tung-tung-tung-sahur.js`.
+  - **`notes(event)`** returns notes to synthesize. A note is `{ frequency, slideTo?, startAt?, duration?, wave?, volume? }`. `events: [...]` lists the events the pack has its own sound for. Others fall back: `setComplete` and `achievement` use `sessionEnd`, `stopEarly` uses `breakEnd`, and `smallWin` is silent. See `professional/sounds/classic-beep.js`.
+- Buying a sound pack plays its `sessionEnd` sound.
+- Nothing plays unless the **Sound** setting is on. App code plays sounds only through `playSound(event)` in `src/services/sound.js`.
+- Keep clips short (a few seconds) and small.
+- Brainrot has one sound pack per theme or character.
 
 ## Profile pictures
 
-`icon` (a name from `src/core/icons.js`) and `color` draw the badge. If the team gets art it has the rights to, put the image next to the file and add an `image` field. The avatar renderer in `src/ui/components.js` is the one place to update.
+`icon` (a name from `src/core/icons.js`) and `color` draw the badge. For a photo instead, put the image next to the file (square, about 160×160, `.webp` or `.png`) and add `image: new URL('./<file>', import.meta.url).href`. The icon and color stay as the fallback. See `brainrot/avatars/tung-tung-tung-sahur.js`.

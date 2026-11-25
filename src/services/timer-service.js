@@ -10,7 +10,8 @@ import { storage, STORAGE_KEYS } from '../core/storage.js';
 import * as rules from '../timer/rules.js';
 import { sessionEndMessage } from '../timer/messages.js';
 import { loadSettings } from './context.js';
-import { playAlert, showNotification, updateTabTitle } from './notify.js';
+import { showNotification, updateTabTitle } from './notify.js';
+import { playSound } from './sound.js';
 import { queueSession } from './session-queue.js';
 
 let sessionEndTimer = null;
@@ -42,6 +43,9 @@ const COMMANDS = {
   reset: (timer) => rules.reset(timer),
   switchMode: (timer, settings, mode) => (rules.MODES.includes(mode) ? rules.reset(timer, mode) : timer),
   setTask: (timer, settings, taskId) => ({ ...timer, taskId: taskId || null }),
+  // Dev console only (src/dev/):
+  setSpeed: (timer, settings, speed) => rules.setSpeed(timer, speed),
+  endNow: (timer) => rules.endNow(timer),
   clear: () => rules.createIdleTimer(),
 };
 
@@ -53,13 +57,14 @@ function serialized(job) {
   return result;
 }
 
-/** command: start | pause | resume | stop | reset | switchMode | setTask | clear. Returns the new timer. */
+/** command: start | pause | resume | stop | reset | switchMode | setTask | clear (+ setSpeed, endNow for the dev console). Returns the new timer. */
 export function handleTimerCommand(command, arg) {
   return serialized(async () => {
     const run = COMMANDS[command];
     if (!run) throw new Error(`Unknown timer command: ${command}`);
     const settings = await loadSettings();
-    return saveTimer(run(await loadTimer(), settings, arg), settings);
+    const timer = await saveTimer(run(await loadTimer(), settings, arg), settings);
+    return command === 'endNow' ? finishSession(timer, settings) : timer;
   });
 }
 
@@ -96,7 +101,11 @@ async function finishSession(timer, settings) {
     const { title, body } = sessionEndMessage(alert);
     showNotification('session-end', title, body);
   }
-  if (endedRecently && settings.alertSound) playAlert(settings.soundPack, result.finishedMode === 'focus' ? 'sessionEnd' : 'breakEnd');
+  if (endedRecently) {
+    let event = 'breakEnd';
+    if (result.finishedMode === 'focus') event = result.nextMode === 'long' ? 'setComplete' : 'sessionEnd';
+    playSound(event);
+  }
   if (result.session) await queueSession(result.session);
   return result.timer;
 }

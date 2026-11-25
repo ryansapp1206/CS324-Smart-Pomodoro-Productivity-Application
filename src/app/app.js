@@ -16,11 +16,12 @@
 import { t } from '../core/theme-engine.js';
 import { makeId, fromDayKey } from '../core/utils.js';
 import { DEFAULT_SETTINGS } from '../data/model.js';
-import { ACHIEVEMENTS, REWARDS, balanceOf, unlockedAchievementIds } from '../shop/progress.js';
+import { ACHIEVEMENTS, REWARDS, balanceOf, hasUnlimitedBalance, unlockedAchievementIds } from '../shop/progress.js';
 import { createIdleTimer } from '../timer/rules.js';
 import { createUiState, taskFormSnapshot } from './state.js';
 import { createSettingsDraft, hasUnsavedSettings } from './settings-draft.js';
 import { applyAppearance } from './account.js';
+import { playSound } from '../services/sound.js';
 import { renderApp, renderToasts } from './render.js';
 
 const PRIORITY_ORDER = { High: 0, Medium: 1, Low: 2 };
@@ -101,6 +102,10 @@ export class App {
     return this.data ? balanceOf(this.data) : 0;
   }
 
+  hasUnlimitedBalance() {
+    return Boolean(this.data && hasUnlimitedBalance(this.data));
+  }
+
   /* ------------------------------- Feedback ------------------------------- */
 
   /** Screen-reader announcement. */
@@ -128,6 +133,7 @@ export class App {
   /** Toast every achievement unlocked since `before` (a Set of ids). */
   celebrateNewAchievements(before) {
     const after = this.achievementIds();
+    if ([...after].some((id) => !before.has(id))) playSound('achievement');
     for (const achievement of ACHIEVEMENTS) {
       if (after.has(achievement.id) && !before.has(achievement.id)) {
         const name = t('ach.' + achievement.id);

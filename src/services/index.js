@@ -4,7 +4,8 @@
      timer-service.js   the timer and session end
      session-queue.js   saving finished sessions, with retry
      reminders.js       deadline and daily reminders
-     notify.js          notifications, sound, tab title
+     notify.js          notifications, tab title
+     sound.js           playSound(event): every sound effect goes through here
    ===================================================================== */
 
 import { storage, STORAGE_KEYS } from '../core/storage.js';
@@ -15,6 +16,7 @@ import { checkDeadlines, scheduleDailyReminder, scheduleDeadlineChecks, stopRemi
 export { handleTimerCommand, checkSessionEnd } from './timer-service.js';
 export { flushPendingSessions } from './session-queue.js';
 export { requestNotificationPermission } from './notify.js';
+export { playSound } from './sound.js';
 
 /** Call once when the page loads. */
 export function startServices() {

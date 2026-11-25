@@ -22,7 +22,7 @@ import sixSeven from './themes/six-seven/theme.js';
 import tralaleroTralala from './themes/tralalero-tralala/theme.js';
 import tungTungTungSahur from './themes/tung-tung-tung-sahur/theme.js';
 
-import tungTungDrums from './sounds/tung-tung-drums.js';
+import tungTungTungSahurSound from './sounds/tung-tung-tung-sahur.js';
 import sixSevenChime from './sounds/six-seven-chime.js';
 import tralaleroTune from './sounds/tralalero-tune.js';
 import sigmaBassDrop from './sounds/sigma-bass-drop.js';
@@ -47,12 +47,14 @@ export default {
   /** Meme-speak overrides for src/core/copy.js, used by every brainrot theme. */
   copy,
 
-  /** Equipped when nothing else is, and always owned (so the starter sound pack is free here). */
-  defaults: { theme: 'brainrot', soundPack: 'tung-tung-drums', avatar: 'initials' },
+  /** Equipped when nothing else is, and always owned. */
+  // soundPack: temporary until the default brainrot pack is made.
+  defaults: { theme: 'brainrot', soundPack: 'tung-tung-tung-sahur', avatar: 'initials' },
 
   /** Shown in this order in Settings and the Shop. */
   themes: [brainrot, sigmaGrindset, alphaWolf, mogger, sixSeven, tralaleroTralala, tungTungTungSahur],
-  sounds: [tungTungDrums, sixSevenChime, tralaleroTune, sigmaBassDrop, moggerHorn, alphaHowl],
+  // One pack per brainrot theme or character.
+  sounds: [tungTungTungSahurSound, sixSevenChime, tralaleroTune, sigmaBassDrop, moggerHorn, alphaHowl],
   avatars: [
     tungTungTungSahurAvatar,
     tralaleroTralalaAvatar,

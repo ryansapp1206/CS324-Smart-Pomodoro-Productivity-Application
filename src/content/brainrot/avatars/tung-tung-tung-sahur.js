@@ -1,11 +1,13 @@
-/* Tung Tung Tung Sahur profile picture: an icon badge (original, no character art).
-   To use real art later, add an image file next to this one and set `image`. */
+/* Tung Tung Tung Sahur profile picture: a photo (tung-tung-tung-sahur.webp,
+   next to this file). `icon` and `color` are the fallback if the image
+   can't load. */
 
 export default {
   id: 'tung-tung-tung-sahur',
   name: 'Tung Tung Tung Sahur',
-  description: 'Wakes you up. Will not stop.',
+  description: 'Has a bat. Wakes you up. Will not stop.',
   price: 100,
-  icon: 'drum', // from src/core/icons.js
-  color: '#c68642', // badge background
+  image: new URL('./tung-tung-tung-sahur.webp', import.meta.url).href,
+  icon: 'bat', // from src/core/icons.js
+  color: '#d9a066', // badge background
 };

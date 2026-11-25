@@ -10,7 +10,7 @@ import { icon } from '../core/icons.js';
 import { t, decoration } from '../core/theme-engine.js';
 import { SESSIONS_PER_LONG_BREAK } from '../data/model.js';
 import { RING_CIRCUMFERENCE, remainingMs, sendTimerCommand, totalMs } from '../app/timer-client.js';
-import { requestNotificationPermission } from '../services/index.js';
+import { playSound, requestNotificationPermission } from '../services/index.js';
 import { actionButton, segmentButton } from '../ui/components.js';
 
 export function timerScreen(app) {
@@ -131,14 +131,20 @@ export const actions = {
     const wasActive = app.timer.status !== 'idle';
     app.ui.focusAfterRender = 'startTimer:';
     sendTimerCommand(app, 'stop');
-    if (wasActive) app.toast(t('timer.notCounted'));
+    if (wasActive) {
+      playSound('stopEarly');
+      app.toast(t('timer.notCounted'));
+    }
   },
   /** Reset: restart the current mode from its full length. */
   resetTimer(app) {
     const wasActive = app.timer.status !== 'idle';
     app.ui.focusAfterRender = 'startTimer:';
     sendTimerCommand(app, 'reset');
-    if (wasActive) app.toast(t('timer.notCounted'));
+    if (wasActive) {
+      playSound('stopEarly');
+      app.toast(t('timer.notCounted'));
+    }
   },
   openTaskPicker(app, arg, element) {
     app.ui.returnFocusId = element.dataset.focusId;

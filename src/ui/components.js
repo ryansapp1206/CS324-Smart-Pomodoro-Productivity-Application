@@ -98,9 +98,12 @@ export function initialsOf(name) {
     .join('');
 }
 
-/** The user's profile picture: an equipped avatar's icon badge, or their initials. */
+/** The user's profile picture: an equipped avatar's photo or icon badge, or their initials. */
 export function avatarHtml(user, avatarId, className = 'av') {
   const avatar = activeEcosystem().avatars.find((candidate) => candidate.id === avatarId);
+  if (avatar && avatar.image) {
+    return `<span class="${className} av-photo" style="background:${avatar.color}" aria-hidden="true"><img src="${avatar.image}" alt=""></span>`;
+  }
   if (avatar) {
     return `<span class="${className} av-icon" style="background:${avatar.color}" aria-hidden="true">${icon(avatar.icon)}</span>`;
   }
@@ -165,4 +168,14 @@ export function lastSyncedText(app) {
   else if (minutesAgo < 60) when = t('sync.minAgo', { n: minutesAgo });
   else when = formatDate(app.lastSyncedAt, { hour: 'numeric', minute: '2-digit' });
   return t('sync.lastSynced', { when });
+}
+
+/* ------------------------------ Currency ------------------------------ */
+
+/** The balance as text, or a glowing infinity sign for an unlimited account. */
+export function balanceHtml(app) {
+  if (app.hasUnlimitedBalance()) {
+    return `<span class="balance-infinite" aria-hidden="true">∞</span><span class="sr-only">${t('currency.unlimited')}</span>`;
+  }
+  return app.balance().toLocaleString();
 }

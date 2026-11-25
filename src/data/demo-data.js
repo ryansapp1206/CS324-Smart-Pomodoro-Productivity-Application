@@ -6,6 +6,7 @@
 
 import { daysFromNow, startOfDay, toDayKey } from '../core/utils.js';
 import { DEFAULT_SETTINGS } from './model.js';
+import { UNLIMITED_GRANT } from '../shop/progress.js';
 
 export const DEMO_USER = {
   id: 'u_demo',
@@ -77,5 +78,8 @@ export function createDemoData() {
   }
   sessions.sort((a, b) => a.startedAt.localeCompare(b.startedAt));
 
-  return { tasks, sessions, purchases: [], settings: structuredClone(DEFAULT_SETTINGS) };
+  // Unlimited balance, shown as a glowing infinity sign (src/shop/progress.js).
+  const purchases = [{ itemId: UNLIMITED_GRANT, price: 0, purchasedAt: new Date(now).toISOString() }];
+
+  return { tasks, sessions, purchases, settings: structuredClone(DEFAULT_SETTINGS) };
 }
