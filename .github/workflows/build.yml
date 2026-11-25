@@ -1,6 +1,7 @@
 # Builds the browser extensions and the website from the same files
 # (scripts/build.mjs), then:
 #   every run         Chrome .zip and Firefox .xpi uploaded as build artifacts
+#                     (as the files themselves, not zipped again)
 #   push to main      the website deployed to GitHub Pages, with the two
 #                     extension files under downloads/
 #   tag v1.2.3        a GitHub Release with both files attached (and, if the
@@ -54,18 +55,21 @@ jobs:
       - name: Check the Firefox extension (web-ext lint)
         run: npx --yes web-ext@8 lint --source-dir dist/firefox --output text
 
-      - name: Upload Chrome extension
-        uses: actions/upload-artifact@v4
+      # archive: false uploads each file as it is, so the downloads are the
+      # Chrome .zip itself and the Firefox .xpi itself (not wrapped in
+      # another zip). The artifact is named after the file.
+      - name: Upload Chrome extension (.zip)
+        uses: actions/upload-artifact@v7
         with:
-          name: pomodoro-chrome-${{ steps.version.outputs.version }}
-          path: dist/pomodoro-chrome-*.zip
+          path: dist/pomodoro-chrome-${{ steps.version.outputs.version }}.zip
+          archive: false
           if-no-files-found: error
 
-      - name: Upload Firefox extension
-        uses: actions/upload-artifact@v4
+      - name: Upload Firefox extension (.xpi)
+        uses: actions/upload-artifact@v7
         with:
-          name: pomodoro-firefox-${{ steps.version.outputs.version }}
-          path: dist/pomodoro-firefox-*.xpi
+          path: dist/pomodoro-firefox-${{ steps.version.outputs.version }}.xpi
+          archive: false
           if-no-files-found: error
 
       - name: Upload website for Pages
