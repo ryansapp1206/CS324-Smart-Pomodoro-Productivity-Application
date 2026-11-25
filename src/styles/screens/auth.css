@@ -1,0 +1,90 @@
+/* ===================================================================
+   SCREEN: log in, register, password reset
+   Colors, fonts and sizes come from theme tokens (var(--token)) only.
+   =================================================================== */
+
+/* ---- Auth screens ---- */
+.auth {
+  height: 100%;
+  overflow-y: auto;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.45;
+  padding: 22px 26px 20px;
+  color-scheme: var(--scheme);
+}
+.auth-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.auth-brand .tomato {
+  width: 40px;
+  height: 40px;
+}
+.auth-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 18px;
+}
+.auth-tag {
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+.auth h1 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  margin: 0 0 4px;
+}
+.auth-sub {
+  color: var(--text-muted);
+  margin: 0 0 16px;
+}
+.row-end {
+  display: flex;
+  justify-content: flex-end;
+  margin: -6px 0 14px;
+}
+.auth-alt {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-top: 14px;
+}
+.demo-hint {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 14px;
+}
+.state-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-sunken);
+}
+.state-icon svg.i {
+  width: 28px;
+  height: 28px;
+}
+.state-icon.danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.state-icon.ok {
+  background: var(--success-bg);
+  color: var(--success);
+}

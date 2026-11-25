@@ -1,0 +1,37 @@
+/* ===================================================================
+   SCREEN: profile
+   Colors, fonts and sizes come from theme tokens (var(--token)) only.
+   =================================================================== */
+
+/* ---- Profile ---- */
+.sub-hdr {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: -4px 0 12px;
+}
+.sub-hdr h1 {
+  font-size: 17px;
+}
+.profile-card {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.avatar-lg {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+}
+.p-name {
+  font-weight: 700;
+  font-size: 15px;
+}

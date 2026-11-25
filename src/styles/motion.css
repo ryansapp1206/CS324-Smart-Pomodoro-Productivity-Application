@@ -1,0 +1,25 @@
+/* ===================================================================
+   THEME DECORATIONS AND REDUCED MOTION
+   Colors, fonts and sizes come from theme tokens (var(--token)) only.
+   =================================================================== */
+
+/* ---- Theme decorations and reduced motion ---- */
+.deco {
+  pointer-events: none;
+}
+[data-reduce-motion="true"] .app-frame *,
+[data-reduce-motion="true"] .app-frame *::after {
+  animation: none !important;
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-frame *,
+  .app-frame *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.shop-thumb.round {
+  border-radius: 50%;
+}

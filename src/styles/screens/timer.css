@@ -1,0 +1,127 @@
+/* ===================================================================
+   SCREEN: timer
+   Colors, fonts and sizes come from theme tokens (var(--token)) only.
+   =================================================================== */
+
+/* ---- Timer ---- */
+.ring-wrap {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 12px auto 2px;
+}
+.ring {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.ring-track {
+  fill: none;
+  stroke: color-mix(in srgb, var(--mode) 16%, var(--surface-sunken));
+  stroke-width: 12;
+}
+.ring-prog {
+  fill: none;
+  stroke: var(--mode);
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.25s linear;
+}
+.ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.time {
+  font-family: var(--font-timer);
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.mode-label {
+  margin-top: 8px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.mode-sub {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+.cycle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0 12px;
+}
+.cdots {
+  display: flex;
+  gap: 7px;
+}
+.cdots span {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid var(--mode);
+}
+.cdots span.on {
+  background: var(--mode);
+}
+.cycle-txt {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.task-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: left;
+  color: var(--text-muted);
+}
+.task-chip.has {
+  border-style: solid;
+  color: var(--text);
+}
+.chip-txt {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.controls-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+.banner-compact {
+  align-items: center;
+  padding: 6px 6px 6px 12px;
+}
+.banner-compact .grow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.spacer-btn {
+  width: 84px;
+}
