@@ -17,6 +17,7 @@ import { sessionEndMessage } from '../timer/messages.js';
 import { checkSessionEnd, handleTimerCommand } from '../services/index.js';
 import { updateTabTitle } from '../services/notify.js';
 import { mergeSessions, writeCache } from './account.js';
+import { refreshDevConsole } from '../dev/console.js';
 
 const RING_CIRCUMFERENCE = 2 * Math.PI * 96;
 const ALERT_MAX_AGE_MS = 60 * 60000; // show a missed alert when the page opens within an hour
@@ -71,6 +72,7 @@ export function listenToBackground(app) {
     if (!timer || !app.user) return;
     app.timer = timer;
     app.render();
+    refreshDevConsole(app);
   });
 
   storage.onChange(STORAGE_KEYS.alert, (alert) => {

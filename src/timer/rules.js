@@ -17,6 +17,7 @@
      taskId            task being worked on, or null
      startedAt         ms timestamp the session started
      justFinishedBreak true right after a break ends (Start button says "Start focus")
+     speed             1 normally; >1 only from the dev console (60 = 1 second per minute)
    ===================================================================== */
 
 import { SESSIONS_PER_LONG_BREAK } from '../data/model.js';
@@ -41,11 +42,17 @@ export function createIdleTimer() {
     taskId: null,
     startedAt: 0,
     justFinishedBreak: false,
+    speed: 1,
   };
 }
 
+/** Timer speed (only the dev console changes it). */
+function speedOf(timer) {
+  return timer.speed || 1;
+}
+
 export function remainingMs(timer, settings, now = Date.now()) {
-  if (timer.status === 'running') return Math.max(0, timer.endsAt - now);
+  if (timer.status === 'running') return Math.max(0, (timer.endsAt - now) * speedOf(timer));
   if (timer.status === 'paused') return timer.pausedRemainingMs;
   return minutesFor(settings, timer.mode) * 60000;
 }
@@ -67,19 +74,32 @@ export function start(timer, settings, now = Date.now()) {
     sessionMinutes: minutes,
     sessionLengthMs: minutes * 60000,
     startedAt: now,
-    endsAt: now + minutes * 60000,
+    endsAt: now + (minutes * 60000) / speedOf(timer),
     justFinishedBreak: false,
   };
 }
 
 export function pause(timer, now = Date.now()) {
   if (timer.status !== 'running') return timer;
-  return { ...timer, status: 'paused', pausedRemainingMs: Math.max(0, timer.endsAt - now) };
+  return { ...timer, status: 'paused', pausedRemainingMs: remainingMs(timer, null, now) };
 }
 
 export function resume(timer, now = Date.now()) {
   if (timer.status !== 'paused') return timer;
-  return { ...timer, status: 'running', endsAt: now + timer.pausedRemainingMs };
+  return { ...timer, status: 'running', endsAt: now + timer.pausedRemainingMs / speedOf(timer) };
+}
+
+/** Dev console: change the speed, keeping the time left on a running session. */
+export function setSpeed(timer, speed, now = Date.now()) {
+  const next = { ...timer, speed: Math.max(1, Number(speed) || 1) };
+  if (timer.status === 'running') next.endsAt = now + remainingMs(timer, null, now) / next.speed;
+  return next;
+}
+
+/** Dev console: make a running or paused session end right now. */
+export function endNow(timer, now = Date.now()) {
+  if (timer.status === 'idle') return timer;
+  return { ...timer, status: 'running', endsAt: now };
 }
 
 /** Back to idle, optionally in another mode. The session in progress is not counted. */

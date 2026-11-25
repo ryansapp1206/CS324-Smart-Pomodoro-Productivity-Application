@@ -42,6 +42,9 @@ const COMMANDS = {
   reset: (timer) => rules.reset(timer),
   switchMode: (timer, settings, mode) => (rules.MODES.includes(mode) ? rules.reset(timer, mode) : timer),
   setTask: (timer, settings, taskId) => ({ ...timer, taskId: taskId || null }),
+  // Dev console only (src/dev/):
+  setSpeed: (timer, settings, speed) => rules.setSpeed(timer, speed),
+  endNow: (timer) => rules.endNow(timer),
   clear: () => rules.createIdleTimer(),
 };
 
@@ -53,13 +56,14 @@ function serialized(job) {
   return result;
 }
 
-/** command: start | pause | resume | stop | reset | switchMode | setTask | clear. Returns the new timer. */
+/** command: start | pause | resume | stop | reset | switchMode | setTask | clear (+ setSpeed, endNow for the dev console). Returns the new timer. */
 export function handleTimerCommand(command, arg) {
   return serialized(async () => {
     const run = COMMANDS[command];
     if (!run) throw new Error(`Unknown timer command: ${command}`);
     const settings = await loadSettings();
-    return saveTimer(run(await loadTimer(), settings, arg), settings);
+    const timer = await saveTimer(run(await loadTimer(), settings, arg), settings);
+    return command === 'endNow' ? finishSession(timer, settings) : timer;
   });
 }
 
