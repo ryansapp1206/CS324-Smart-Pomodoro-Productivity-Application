@@ -51,7 +51,7 @@ function shopItemThumbnail(app, item) {
   if (item.kind === 'theme') return swatchHtml(item.swatch, 'swatch sw-mini');
   if (item.kind === 'sound') return `<span class="shop-thumb" aria-hidden="true">${icon(item.icon)}</span>`;
   if (item.id === 'initials') return avatarHtml(app.user, 'initials', 'shop-thumb av-ini');
-  return `<span class="shop-thumb round av-icon" style="background:${item.color}" aria-hidden="true">${icon(item.icon)}</span>`;
+  return avatarHtml(app.user, item.id, 'shop-thumb round');
 }
 
 /** The button on a shop row: Equipped / Equip / Buy / Need more / Owned · coming soon. */

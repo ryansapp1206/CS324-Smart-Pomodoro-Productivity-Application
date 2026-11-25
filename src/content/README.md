@@ -65,4 +65,4 @@ Rules for every theme:
 
 ## Profile pictures
 
-`icon` (a name from `src/core/icons.js`) and `color` draw the badge. If the team gets art it has the rights to, put the image next to the file and add an `image` field. The avatar renderer in `src/ui/components.js` is the one place to update.
+`icon` (a name from `src/core/icons.js`) and `color` draw the badge. For a photo instead, put the image next to the file (square, about 160×160, `.webp` or `.png`) and add `image: new URL('./<file>', import.meta.url).href`. The icon and color stay as the fallback. See `brainrot/avatars/tung-tung-tung-sahur.js`.

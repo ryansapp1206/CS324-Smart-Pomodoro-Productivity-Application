@@ -225,7 +225,13 @@ The professional ecosystem has no PFPs yet. Its `avatars: []` is ready for them;
 
 Edit `icon`, `color`, `name`, `description` or `price`. Never change `id`.
 
-**Real artwork later:** put the image next to the file, add `image: new URL('./rocket.png', import.meta.url).href`, and update `avatarHtml()` in `src/ui/components.js`. That's the one place that draws PFPs.
+**Use a photo instead of an icon:** crop the image square (about 160×160; `.webp` or `.png`) and put it next to the file. Then add:
+
+```js
+image: new URL('./rocket.webp', import.meta.url).href,
+```
+
+It fills the circle everywhere the PFP appears. `icon` and `color` stay as the fallback. `brainrot/avatars/tung-tung-tung-sahur.js` is an example.
 
 ---
 
