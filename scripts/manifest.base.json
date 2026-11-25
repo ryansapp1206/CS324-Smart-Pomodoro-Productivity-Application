@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Pomodoro",
+  "short_name": "Pomodoro",
+  "version": "1.0.0",
+  "description": "A Pomodoro focus timer with tasks, stats, rewards, themes and reminders.",
+  "icons": {
+    "32": "icons/icon32.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Pomodoro",
+    "default_popup": "index.html?popup",
+    "default_icon": {
+      "32": "icons/icon32.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "permissions": ["storage", "unlimitedStorage", "alarms", "notifications", "contextMenus"],
+  "chrome": {
+    "minimum_chrome_version": "116",
+    "background": { "service_worker": "src/extension/background.js", "type": "module" },
+    "permissions": ["offscreen"]
+  },
+  "firefox": {
+    "background": { "scripts": ["src/extension/background.js"], "type": "module" },
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "smart-pomodoro@cs324-team",
+        "strict_min_version": "140.0",
+        "data_collection_permissions": { "required": ["none"] }
+      }
+    }
+  }
+}
