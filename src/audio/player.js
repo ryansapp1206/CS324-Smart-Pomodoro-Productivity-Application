@@ -1,6 +1,7 @@
 /* =====================================================================
    SOUND PLAYER
-   Synthesizes a sound pack's notes with the Web Audio API (no audio files).
+   Plays a sound pack: recorded audio files if the pack has `files`,
+   otherwise its `notes` synthesized with the Web Audio API.
    Used for Shop previews and session-end alerts. Sound packs live in
    the active ecosystem (src/content/<mode>/sounds/).
    ===================================================================== */
@@ -49,13 +50,29 @@ export function playNotes(notes) {
   }
 }
 
-export function soundPackNotes(packId, event) {
+/** The pack with this id in the active ecosystem, or the ecosystem's default pack. */
+function findSoundPack(packId) {
   const { sounds, defaults } = activeEcosystem();
-  const pack = sounds.find((candidate) => candidate.id === packId) || sounds.find((candidate) => candidate.id === defaults.soundPack);
-  return pack.notes(event);
+  return sounds.find((candidate) => candidate.id === packId) || sounds.find((candidate) => candidate.id === defaults.soundPack);
 }
 
-/** event: 'sessionEnd' | 'breakEnd'. */
+/** Play an audio file (for packs with recorded sounds). */
+function playFile(url) {
+  try {
+    const audio = new Audio(url);
+    audio.play().catch(() => {}); // blocked until the user has clicked something on the page
+  } catch {
+    /* no audio support */
+  }
+}
+
+/**
+ * Play a sound pack. event: 'sessionEnd' | 'breakEnd'.
+ * A pack either has `files` (recorded audio, one per event) or `notes` (synthesized).
+ */
 export function playSoundPack(packId, event = 'sessionEnd') {
-  playNotes(soundPackNotes(packId, event));
+  const pack = findSoundPack(packId);
+  const file = pack.files && (pack.files[event] || pack.files.sessionEnd);
+  if (file) playFile(file);
+  else playNotes(pack.notes(event));
 }

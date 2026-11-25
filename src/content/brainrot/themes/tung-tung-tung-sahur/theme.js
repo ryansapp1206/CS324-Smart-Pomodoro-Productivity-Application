@@ -1,6 +1,7 @@
 /* Tung Tung Tung Sahur: warm wood tones and a pre-dawn night blue for the
    long break (sahur is the meal before dawn). Uses the brainrot wording from
-   ../../copy.js, with a few Sahur lines of its own below. */
+   ../../copy.js, with a few Sahur lines of its own below.
+   dance.webp / dance-still.webp: the dancing animation for the session-complete card. */
 
 import { SHARED_TOKENS } from '../../../shared.js';
 
@@ -60,6 +61,13 @@ export default {
     'alert.breakDone': 'Tung tung tung… back to it.',
     'notif.dailyTitle': 'Sahur time',
     'notif.dailyBody': 'Tung tung tung. Pick a quest and start a lock-in.',
+  },
+
+  // He dances in the "session complete" card (a still frame when Reduce motion is on).
+  decorations: {
+    celebration: () => `
+      <img class="sahur-dance" src="${new URL('./dance.webp', import.meta.url).href}" alt="">
+      <img class="sahur-dance-still" src="${new URL('./dance-still.webp', import.meta.url).href}" alt="">`,
   },
 
   // Theme-only CSS, scoped under [data-theme="tung-tung-tung-sahur"].

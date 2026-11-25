@@ -153,7 +153,7 @@ It now appears in the Shop. Once bought, it shows in Settings → Theme.
 | `tokens` | the colors. Every component uses these through CSS variables like `var(--primary)`. Never hard-code colors anywhere else |
 | `copy` (optional) | text overrides just for this theme, on top of the ecosystem's `copy` |
 | `stylesheet` (optional) | extra CSS. Write `stylesheet: new URL('./theme.css', import.meta.url).href` and scope **every** rule with `[data-theme="<id>"]` |
-| `decorations` (optional) | small HTML extras in fixed slots: `header-accent`, `timer-background`, `timer-overlay`, `empty-state-art`, `celebration`, `achievement-badge-frame` |
+| `decorations` (optional) | small HTML extras in fixed slots: `header-accent`, `timer-background`, `timer-overlay`, `empty-state-art`, `celebration` (the session-complete card), `achievement-badge-frame`. See the Tung Tung Tung Sahur theme's dancing celebration |
 | `comingSoon` + `swatch` | sell a theme before it's built (below) |
 
 ### The color tokens
@@ -237,7 +237,7 @@ It fills the circle everywhere the PFP appears. `icon` and `color` stay as the f
 
 ## 5. Sound packs
 
-Sounds are **synthesized in the browser**, so there are no audio files. A pack is a list of notes.
+A pack is either a list of **notes synthesized in the browser** (no audio files), or a pair of **recorded audio files** (see the end of this section).
 
 ### Add a sound pack
 
@@ -276,7 +276,25 @@ Sounds are **synthesized in the browser**, so there are no audio files. A pack i
 
 **Try it:** open the Shop, go to Sound packs, and press the speaker button next to the pack. You don't have to buy it to preview it.
 
-**Real audio files later:** add a `file` field and teach `src/audio/player.js` to play it. That's the one place that plays sounds.
+### Use recorded audio instead
+
+Put short `.mp3` files next to the pack's `.js` file, and use `files` instead of `notes`:
+
+```js
+export default {
+  id: 'my-clip-pack',
+  name: 'My Clip Pack',
+  description: '…',
+  price: 200,
+  icon: 'music',
+  files: {
+    sessionEnd: new URL('./finish.mp3', import.meta.url).href,
+    breakEnd: new URL('./break.mp3', import.meta.url).href,
+  },
+};
+```
+
+Keep clips to a few seconds, and only use audio you're allowed to use. `brainrot/sounds/tung-tung-tung-sahur.js` is an example.
 
 ---
 

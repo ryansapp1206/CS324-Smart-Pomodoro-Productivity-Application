@@ -23,6 +23,7 @@ import tralaleroTralala from './themes/tralalero-tralala/theme.js';
 import tungTungTungSahur from './themes/tung-tung-tung-sahur/theme.js';
 
 import tungTungDrums from './sounds/tung-tung-drums.js';
+import tungTungTungSahurSound from './sounds/tung-tung-tung-sahur.js';
 import sixSevenChime from './sounds/six-seven-chime.js';
 import tralaleroTune from './sounds/tralalero-tune.js';
 import sigmaBassDrop from './sounds/sigma-bass-drop.js';
@@ -52,7 +53,7 @@ export default {
 
   /** Shown in this order in Settings and the Shop. */
   themes: [brainrot, sigmaGrindset, alphaWolf, mogger, sixSeven, tralaleroTralala, tungTungTungSahur],
-  sounds: [tungTungDrums, sixSevenChime, tralaleroTune, sigmaBassDrop, moggerHorn, alphaHowl],
+  sounds: [tungTungDrums, tungTungTungSahurSound, sixSevenChime, tralaleroTune, sigmaBassDrop, moggerHorn, alphaHowl],
   avatars: [
     tungTungTungSahurAvatar,
     tralaleroTralalaAvatar,

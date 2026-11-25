@@ -60,8 +60,10 @@ Rules for every theme:
 ## Sound packs
 
 - `icon` is the picture in the Shop (a name from `src/core/icons.js`).
-- `notes(event)` returns the notes to play, where `event` is `'sessionEnd'` or `'breakEnd'`.
-- A note is `{ frequency, slideTo?, startAt?, duration?, wave?, volume? }`, synthesized by `src/audio/player.js`.
+- A pack has **either** `files` or `notes`, and the event is `'sessionEnd'` or `'breakEnd'` in both cases:
+  - `files: { sessionEnd, breakEnd }` plays recorded audio kept next to the file, e.g. `new URL('./clip.mp3', import.meta.url).href`. See `brainrot/sounds/tung-tung-tung-sahur.js`.
+  - `notes(event)` returns notes to synthesize. A note is `{ frequency, slideTo?, startAt?, duration?, wave?, volume? }`, played by `src/audio/player.js`.
+- Keep clips short (a few seconds) and small.
 
 ## Profile pictures
 
