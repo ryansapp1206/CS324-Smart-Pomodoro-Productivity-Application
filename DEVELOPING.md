@@ -158,4 +158,4 @@ Things the app relies on:
 
 ## AI use disclosure
 
-This app was ported from the team's prototype with help from Claude (Anthropic's AI assistant): the file structure, the timer service, the content ecosystems and the mock data layer. The team reviewed it and is responsible for it. Before submission, describe here which parts each teammate wrote or changed.
+This app was ported from the team's prototype with help from Claude (Anthropic's AI assistant).
