@@ -6,6 +6,7 @@
      reminders.js       deadline and daily reminders
      notify.js          notifications, tab title
      sound.js           playSound(event): every sound effect goes through here
+     ../sync/engine.js  pairing and syncing with your other devices (LAN)
 
    Website: they run inside the page, while it's open.
    Extension: they run in the extension's background
@@ -20,6 +21,10 @@ import { ext, IS_EXTENSION } from '../core/platform.js';
 import * as timerService from './timer-service.js';
 import * as sessionQueue from './session-queue.js';
 import { checkDeadlines, scheduleDailyReminder, scheduleDeadlineChecks, stopReminders } from './reminders.js';
+import { scheduler } from '../core/scheduler.js';
+import { SYNC_COMMANDS } from '../sync/engine.js';
+
+const SYNC_CHECK_MS = 30000;
 
 export { requestNotificationPermission } from './notify.js';
 export { playSound, setSoundOutput } from './sound.js';
@@ -51,12 +56,29 @@ export function flushPendingSessions() {
   return sessionQueue.flushPendingSessions();
 }
 
+/** Device sync: command is a name in SYNC_COMMANDS (src/sync/engine.js). */
+export function syncCommand(command, ...args) {
+  if (IS_EXTENSION) return inBackground('syncCommand', { command, args });
+  return runSyncCommand(command, args);
+}
+
+function runSyncCommand(command, args = []) {
+  const run = SYNC_COMMANDS[command];
+  if (!run) throw new Error(`Unknown sync command "${command}"`);
+  return run(...args);
+}
+
 /** What the background answers (src/extension/background.js). */
 export const BACKGROUND_CALLS = {
   timerCommand: ({ command, arg }) => timerService.handleTimerCommand(command, arg),
   checkSessionEnd: () => timerService.checkSessionEnd(),
   flushPendingSessions: () => sessionQueue.flushPendingSessions(),
+  syncCommand: ({ command, args }) => runSyncCommand(command, args),
 };
+
+/* ---------------------------- Device sync ---------------------------- */
+
+scheduler.define('syncCheck', () => SYNC_COMMANDS.tick());
 
 /* ------------------------------ Start-up ------------------------------ */
 
@@ -67,6 +89,9 @@ function startCore() {
   scheduleDeadlineChecks();
   checkDeadlines();
   scheduleDailyReminder();
+  // Device sync: check in with the local sync service (pairing requests, changes from other devices).
+  scheduler.every('syncCheck', SYNC_CHECK_MS);
+  SYNC_COMMANDS.tick().catch(() => {});
 
   // Settings saved: the daily reminder time may have changed.
   storage.onChange(STORAGE_KEYS.settings, () => scheduleDailyReminder());
@@ -77,6 +102,7 @@ function startCore() {
       scheduleDeadlineChecks();
       scheduleDailyReminder();
       sessionQueue.flushPendingSessions();
+      SYNC_COMMANDS.tick().catch(() => {});
       return;
     }
     stopReminders();
@@ -84,6 +110,7 @@ function startCore() {
     await storage.remove(STORAGE_KEYS.pendingSessions);
     await storage.remove(STORAGE_KEYS.settings);
     await storage.remove(STORAGE_KEYS.alert);
+    SYNC_COMMANDS.cancelPairing().catch(() => {});
   });
 
   globalThis.addEventListener?.('online', () => sessionQueue.flushPendingSessions());

@@ -12,6 +12,7 @@ import { createIdleTimer } from '../timer/rules.js';
 import { createUiState } from './state.js';
 import { checkDeadlineBanner } from './deadlines.js';
 import { listenToBackground, showUnseenAlert, startClock } from './timer-client.js';
+import { listenToSync } from './sync-client.js';
 
 /** Mode (content ecosystem), theme, button color and reduced motion from the saved settings (also undoes a Settings preview). */
 export function applyAppearance(app) {
@@ -51,6 +52,7 @@ export async function boot(app) {
   if (!user) return app.render();
   app.user = user;
   app.ui.screen = 'main';
+  await listenToSync(app);
   await loadAccount(app);
   await showUnseenAlert(app);
 }
@@ -60,6 +62,7 @@ export async function signIn(app, user) {
   app.ui = createUiState();
   app.ui.screen = 'main';
   app.alert = null;
+  await listenToSync(app);
   await loadAccount(app);
 }
 
@@ -88,11 +91,16 @@ export async function logout(app, { notice = null } = {}) {
   app.renderToasts();
 }
 
-/** Load everything for the signed-in account. Falls back to the cached copy. */
-export async function loadAccount(app, { showToast = false } = {}) {
+/**
+ * Load everything for the signed-in account. Falls back to the cached copy.
+ * quiet: reload in place without the loading screen (another device's changes arrived).
+ */
+export async function loadAccount(app, { showToast = false, quiet = false } = {}) {
   if (!app.user) return;
-  app.loadState = 'loading';
-  app.render();
+  if (!quiet) {
+    app.loadState = 'loading';
+    app.render();
+  }
 
   try {
     const [tasks, sessions, settings, purchases] = await Promise.all([
@@ -103,6 +111,7 @@ export async function loadAccount(app, { showToast = false } = {}) {
     ]);
     const pending = (await storage.get(STORAGE_KEYS.pendingSessions)) || [];
     app.data = { tasks, sessions: mergeSessions(sessions, pending), settings, purchases };
+    if (quiet) app.user = (await data.getCurrentUser()) || app.user; // the name may have changed on another device
     app.pendingCount = pending.length;
     Object.assign(app, { loadState: 'ready', syncState: 'synced', showingCachedData: false, failedSave: null });
     app.lastSyncedAt = Date.now();
@@ -122,7 +131,8 @@ export async function loadAccount(app, { showToast = false } = {}) {
     }
   }
 
-  if (app.data) applyAppearance(app);
+  // A quiet reload leaves a Settings preview alone until it's saved or cancelled.
+  if (app.data && !(quiet && app.ui.tab === 'settings')) applyAppearance(app);
   app.render();
   if (app.loadState === 'ready') await checkDeadlineBanner(app);
 }

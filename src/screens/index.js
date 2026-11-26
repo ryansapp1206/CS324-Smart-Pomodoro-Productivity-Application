@@ -18,9 +18,10 @@ import * as stats from './stats.js';
 import * as shop from './shop.js';
 import * as settings from './settings.js';
 import * as profile from './profile.js';
+import * as devices from './devices.js';
 import * as confirm from '../ui/confirm-dialog.js';
 
-const MODULES = { auth, shell, timer, taskPicker, tasks, taskForm, stats, shop, settings, profile, confirm };
+const MODULES = { auth, shell, timer, taskPicker, tasks, taskForm, stats, shop, settings, profile, devices, confirm };
 
 function collect(field) {
   const merged = {};

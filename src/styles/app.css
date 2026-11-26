@@ -16,5 +16,6 @@
 @import url('./screens/settings.css');
 @import url('./screens/shop.css');
 @import url('./screens/profile.css');
+@import url('./screens/devices.css');
 @import url('./overlays.css');
 @import url('./motion.css');

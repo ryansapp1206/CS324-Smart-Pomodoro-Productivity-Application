@@ -31,8 +31,7 @@ export default {
   'auth.register.submit': 'Create account',
   'auth.namePh': 'Tung Tung Tung Sahur, perhaps?',
   'auth.forgot.title': 'Forgot your password?',
-  'auth.forgot.sub': 'It happens to the best of us. Enter your email and we’ll send a reset link.',
-  'auth.sent.title': 'Check your email, chat',
+  'auth.forgot.sub': 'It happens to the best of us. Your account lives on this device, so enter its email and pick a new password.',
   'auth.reset.done': 'Password updated. Log in and get back to the grind.',
   // Loading
   'load.loading': 'Loading your aura…',
@@ -122,7 +121,7 @@ export default {
   'set.saved': 'Settings saved. Locked in.',
   // Sync
   'sync.done': 'All synced. We’re so back.',
-  'sync.failedBody': 'Couldn’t save that to the cloud. Hit Retry.',
+  'sync.failedBody': 'Couldn’t save that. Hit Retry.',
   // Aura and Shop
   'currency.how': 'Farm aura: {s} per lock-in, {t} per quest cooked, {a} per achievement.',
   'currency.need': 'Need {n} more aura',

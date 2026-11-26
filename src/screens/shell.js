@@ -15,6 +15,8 @@ import { actionButton, avatarHtml, banner, closeBannerButton, lastSyncedText, SY
 import { confirmDialog } from '../ui/confirm-dialog.js';
 import { TAB_SCREENS } from './tabs.js';
 import { profileScreen } from './profile.js';
+import { devicesScreen, pairingRequestBanner, syncErrorText } from './devices.js';
+import { runSync } from '../app/sync-client.js';
 import { taskFormSheet } from './task-form.js';
 import { taskPickerDialog } from './task-picker.js';
 import { unsavedSettingsBar } from './settings.js';
@@ -50,8 +52,12 @@ function openPopover(app) {
       <div class="popover" role="dialog" aria-label="${t('sync.title')}">
         <div class="pop-title">${icon(SYNC_ICONS[state])}${t('sync.' + state)}</div>
         <p class="muted small" style="margin-bottom:6px">${t('sync.' + state + 'Body')}</p>
+        <p class="small muted" style="margin-bottom:6px">${app.sync.peers.length ? t('sync.lanLine', { n: app.sync.peers.length }) : t('sync.lanNone')}</p>
         <p class="small" style="margin-bottom:10px">${lastSyncedText(app)}</p>
-        ${actionButton('syncNow', t('sync.now'), { className: 'btn btn-sm btn-block', icon: 'refresh', disabled: state === 'syncing' })}
+        <div style="display:flex;gap:6px">
+          ${actionButton('syncNow', t('sync.now'), { className: 'btn btn-sm', icon: 'refresh', disabled: state === 'syncing' })}
+          ${actionButton('openDevices', t('sync.devicesButton'), { className: 'btn btn-sm', focusId: 'openDevices:popover' })}
+        </div>
       </div>`;
   }
   if (app.ui.openPopover === 'avatar') {
@@ -99,7 +105,7 @@ function deadlineBanner(app) {
 
 /** Deadline reminder, failed save, finished sessions waiting to sync, and "showing cached data". */
 function statusBanners(app) {
-  let html = deadlineBanner(app);
+  let html = pairingRequestBanner(app) + deadlineBanner(app);
 
   if (app.failedSave) {
     const retry = actionButton('retrySave', t('sync.retry'), { className: 'btn btn-sm', icon: 'refresh', disabled: app.syncState === 'syncing' });
@@ -173,10 +179,11 @@ export function renderSignedIn(app) {
       </div>`;
   }
 
-  const onProfile = app.ui.screen === 'profile';
-  const screenKey = onProfile ? 'profile' : app.ui.tab;
-  const screenHtml = onProfile ? profileScreen(app) : TAB_SCREENS[app.ui.tab](app);
-  const settingsBar = !onProfile && app.ui.tab === 'settings' ? unsavedSettingsBar(app) : '';
+  const onSubScreen = app.ui.screen === 'profile' || app.ui.screen === 'devices';
+  const screenKey = onSubScreen ? app.ui.screen : app.ui.tab;
+  const subScreens = { profile: profileScreen, devices: devicesScreen };
+  const screenHtml = onSubScreen ? subScreens[app.ui.screen](app) : TAB_SCREENS[app.ui.tab](app);
+  const settingsBar = !onSubScreen && app.ui.tab === 'settings' ? unsavedSettingsBar(app) : '';
   let overlay = '';
   if (app.ui.openModal === 'taskForm') overlay = taskFormSheet(app);
   if (app.ui.openModal === 'taskPicker') overlay = taskPickerDialog(app);
@@ -217,10 +224,20 @@ export const actions = {
   },
 
   /* Sync and banners */
-  syncNow(app) {
+  /** Save anything waiting, reload, and send changes to paired devices on the network. */
+  async syncNow(app) {
     app.ui.openPopover = null;
     flushPendingSessions();
-    loadAccount(app, { showToast: true });
+    await loadAccount(app, { quiet: true });
+    if (!app.sync.peers.length) return app.toast(t('sync.refreshed'), 'success');
+    app.syncState = 'syncing';
+    app.render();
+    const result = await runSync('syncNow');
+    app.syncState = 'synced';
+    if (!result.ok) app.toast(syncErrorText(result.error), 'info');
+    else if (result.value.failed) app.toast(t('sync.sendFailed', { n: result.value.failed }), 'info');
+    else app.toast(t('sync.sent', { n: result.value.sent }), 'success');
+    app.render();
   },
   retryLoad(app) {
     loadAccount(app, { showToast: true });

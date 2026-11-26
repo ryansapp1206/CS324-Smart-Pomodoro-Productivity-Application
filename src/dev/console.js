@@ -2,21 +2,21 @@
    DEV CONSOLE (development only, remove or keep hidden before release)
    A small panel for testing faster: timer speed (1×, 10×, 60×) and
    "End session now".
-   - Only exists with the mock backend (src/config.js).
+   - Only exists when CONFIG.devTools is true (src/config.js).
    - Hidden until opened: add ?dev to the address, or press Ctrl+Shift+D.
    Everything it does goes through the timer service's dev commands
    (setSpeed, endNow in src/services/timer-service.js).
    ===================================================================== */
 
 import { icon } from '../core/icons.js';
-import { backendKind } from '../data/index.js';
+import { CONFIG } from '../config.js';
 import { handleTimerCommand } from '../services/index.js';
 
 const SPEEDS = [1, 10, 60];
 let panel = null;
 
 export function startDevConsole(app) {
-  if (backendKind !== 'mock') return;
+  if (!CONFIG.devTools) return;
   const link = document.createElement('link');
   link.rel = 'stylesheet';
   link.href = new URL('./console.css', import.meta.url).href;

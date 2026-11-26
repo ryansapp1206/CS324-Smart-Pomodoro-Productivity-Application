@@ -160,13 +160,16 @@ export function taskMeta(task, sessionCount, isCurrent) {
 
 export const SYNC_ICONS = { synced: 'cloudCheck', syncing: 'refresh', offline: 'cloudOff', failed: 'alert' };
 
+/** With paired devices: the last time one of them synced. Otherwise: the last time the data loaded. */
 export function lastSyncedText(app) {
-  if (!app.lastSyncedAt) return t('sync.never');
-  const minutesAgo = Math.floor((Date.now() - app.lastSyncedAt) / 60000);
+  const peers = app.sync?.peers || [];
+  const at = peers.length ? Math.max(0, ...peers.map((peer) => peer.lastSyncAt || 0)) : app.lastSyncedAt;
+  if (!at) return t('sync.never');
+  const minutesAgo = Math.floor((Date.now() - at) / 60000);
   let when;
   if (minutesAgo < 1) when = t('sync.justNow');
   else if (minutesAgo < 60) when = t('sync.minAgo', { n: minutesAgo });
-  else when = formatDate(app.lastSyncedAt, { hour: 'numeric', minute: '2-digit' });
+  else when = formatDate(at, { hour: 'numeric', minute: '2-digit' });
   return t('sync.lastSynced', { when });
 }
 

@@ -1,0 +1,203 @@
+/* ===================================================================
+   SCREEN: devices (sync over the local network)
+   Colors, fonts and sizes come from theme tokens (var(--token)) only.
+   =================================================================== */
+
+.svc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.svc-on > svg.i {
+  color: var(--success);
+}
+.svc-off > svg.i {
+  color: var(--warning);
+}
+.inline-form {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.inline-form .input {
+  flex: 1;
+  min-width: 0;
+  min-height: 36px;
+}
+
+/* ---- Commands to copy ---- */
+.cmd {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 6px 0 10px;
+  padding: 6px 6px 6px 10px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.cmd code {
+  flex: 1;
+  min-width: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+/* ---- Device lists ---- */
+.dev-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.dev-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+.dev-row + .dev-row {
+  border-top: 1px solid var(--border);
+}
+.dev-txt {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.dev-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dev-pick {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  text-align: left;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font: inherit;
+}
+.dev-pick:hover:not(:disabled) {
+  background: var(--surface-sunken);
+  border-color: var(--primary);
+}
+.dev-pick:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.dev-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+}
+.chev-right {
+  transform: rotate(-90deg);
+}
+.dot {
+  width: 9px;
+  height: 9px;
+  flex: 0 0 9px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+.dot-on {
+  background: var(--success);
+}
+
+/* ---- Pairing ---- */
+.pair-card {
+  border: 2px solid var(--primary);
+}
+.pair-title {
+  font-weight: 700;
+}
+.pair-wait {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pair-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+.pair-code {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 8px 0 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: var(--text);
+}
+.pair-code span {
+  width: 14px;
+}
+.code-input {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 22px;
+  letter-spacing: 0.3em;
+  text-align: center;
+}
+.warn-text {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+  color: var(--text-muted);
+}
+.warn-text > svg.i {
+  flex: 0 0 auto;
+  color: var(--warning);
+}
+.ok-icon {
+  color: var(--success);
+}
+
+/* ---- Troubleshooting ---- */
+.trouble-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.trouble-toggle > span {
+  flex: 1;
+}
+.chev-open {
+  transform: rotate(180deg);
+}
+#sync-trouble {
+  margin-top: 10px;
+}
+#sync-trouble p {
+  margin: 8px 0 0;
+}

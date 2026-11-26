@@ -22,7 +22,7 @@ import {
   settingsErrors,
 } from '../app/settings-draft.js';
 import { requestNotificationPermission } from '../services/index.js';
-import { actionButton, lastSyncedText, swatchHtml, switchRow } from '../ui/components.js';
+import { actionButton, swatchHtml, switchRow } from '../ui/components.js';
 
 const THEME_SWATCH_TOKENS = ['bg', 'surface', 'mode-focus', 'mode-short', 'mode-long'];
 
@@ -126,7 +126,6 @@ export function settingsScreen(app) {
     .map((theme) => themeCard(theme, equippedId(draft, 'theme') === theme.id, draft.accent))
     .join('');
   const soundPack = findShopItem('sound', equippedId(app.settings(), 'sound'));
-  const backendName = data.backendKind === 'mock' ? t('set.backendMock') : data.backendKind;
 
   return `
     <div class="sec-label">${t('set.timer')}</div>
@@ -171,12 +170,18 @@ export function settingsScreen(app) {
     <section class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
         <div>
-          <div style="font-weight:600">${t('sync.' + app.syncState)}</div>
-          <div class="small muted">${lastSyncedText(app)}</div>
-          <div class="small muted">${t('set.backend')}: ${backendName}</div>
+          <div style="font-weight:600">${t('set.syncTitle')}</div>
+          <div class="small muted">${app.sync.peers.length ? t('set.syncPaired', { n: app.sync.peers.length }) : t('set.syncNone')}</div>
+          <div class="small muted">${t(app.sync.status.service === 'online' ? 'set.syncServiceOn' : 'set.syncServiceOff')}</div>
         </div>
         ${actionButton('syncNow', t('sync.now'), { className: 'btn btn-sm', icon: 'refresh', focusId: 'syncNow:settings', disabled: app.syncState === 'syncing' })}
       </div>
+      <div class="sw-row">
+        <div class="sw-txt"><label for="set-sync-auto">${t('sync.auto')}</label><div class="sub" id="set-sync-auto-d">${t('sync.autoSub')}</div></div>
+        <input type="checkbox" role="switch" class="switch" id="set-sync-auto" ${app.sync.config.autoSync ? 'checked' : ''}
+          data-live="autoSync" data-focus-id="settings.autoSync" aria-describedby="set-sync-auto-d">
+      </div>
+      ${actionButton('openDevices', t('set.openDevices'), { className: 'btn btn-block', icon: 'refresh', focusId: 'openDevices:settings' })}
     </section>
 
     <div class="sec-label">${t('set.account')}</div>

@@ -119,6 +119,12 @@ export const STORAGE_KEYS = {
   pendingSessions: 'pendingSessions', // sessions that couldn't be saved yet, retried automatically
   remindedOn: 'remindedOn', // deadline banner log: { taskId: 'YYYY-MM-DD' }
   notifiedOn: 'notifiedOn', // deadline notification log: { taskId: 'YYYY-MM-DD' }
-  mockCloud: 'mockCloud', // the mock backend's data
+  localStore: 'localStore', // accounts and their data (src/data/local-backend.js)
+  legacyMockCloud: 'mockCloud', // the prototype's store, moved into localStore once
+  syncDevice: 'syncDevice', // this app's id, name and token for the local sync service
+  syncConfig: 'syncConfig', // { autoSync } for this device
+  syncStatus: 'syncStatus', // sync service state, nearby devices, notices (src/sync/engine.js)
+  syncPairing: 'syncPairing', // the device pairing in progress
+  syncPeers: (userId) => `syncPeers:${userId}`, // devices paired with this account, with their keys
   cache: (userId) => `cache:${userId}`, // last data loaded from the backend, shown if loading fails
 };

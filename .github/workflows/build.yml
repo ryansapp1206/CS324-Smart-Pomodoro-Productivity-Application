@@ -72,6 +72,13 @@ jobs:
           archive: false
           if-no-files-found: error
 
+      - name: Upload sync service (.mjs)
+        uses: actions/upload-artifact@v7
+        with:
+          path: dist/pomodoro-sync.mjs
+          archive: false
+          if-no-files-found: error
+
       - name: Upload website for Pages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
@@ -86,6 +93,7 @@ jobs:
           path: |
             dist/pomodoro-chrome-*.zip
             dist/pomodoro-firefox-*.xpi
+            dist/pomodoro-sync.mjs
             dist/firefox/
 
   deploy-pages:
@@ -140,4 +148,4 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "Pomodoro $GITHUB_REF_NAME" --generate-notes \
-            dist/pomodoro-chrome-*.zip dist/pomodoro-firefox-*.xpi
+            dist/pomodoro-chrome-*.zip dist/pomodoro-firefox-*.xpi dist/pomodoro-sync.mjs
