@@ -10,6 +10,7 @@
 
 import light from './themes/light/theme.js';
 import dark from './themes/dark/theme.js';
+import ocean from './themes/ocean/theme.js';
 import classicBeep from './sounds/classic-beep.js';
 
 export default {
@@ -25,7 +26,7 @@ export default {
   defaults: { theme: 'light', soundPack: 'classic-beep', avatar: 'initials' },
 
   /** Shown in this order in Settings and the Shop. */
-  themes: [light, dark],
+  themes: [light, dark, ocean],
   sounds: [classicBeep],
   avatars: [], // "Initials" is built in; add professional profile pictures here
 };
