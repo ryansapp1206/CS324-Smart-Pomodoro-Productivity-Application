@@ -6,6 +6,7 @@
    ===================================================================== */
 
 import { DEFAULT_MODE, getEcosystem } from '../content/index.js';
+import { DEFAULT_ACCENT, findAccent } from '../content/shared.js';
 import { findShopItem, ownsItem } from '../shop/catalog.js';
 import { balanceOf } from '../shop/progress.js';
 import { makeId, nowIso } from '../core/utils.js';
@@ -35,6 +36,7 @@ export const DEFAULT_SETTINGS = {
   soundPack: DEFAULT_CONTENT.soundPack,
   avatar: DEFAULT_CONTENT.avatar,
   // Additions to the contract (all optional, defaults fill them in):
+  accent: DEFAULT_ACCENT, // button color for themes that allow it (ACCENTS in src/content/shared.js)
   mode: DEFAULT_MODE, // 'professional' | 'brainrot': which content ecosystem is active (src/content/)
   sessionAlerts: true,
   breakAlerts: true,
@@ -68,6 +70,7 @@ export function normalizeSettings(settings = {}) {
     durations: { ...DEFAULT_SETTINGS.durations, ...(settings.durations || {}) },
     dailyReminder: { ...DEFAULT_SETTINGS.dailyReminder, ...(settings.dailyReminder || {}) },
   };
+  merged.accent = findAccent(merged.accent).id;
   return merged;
 }
 

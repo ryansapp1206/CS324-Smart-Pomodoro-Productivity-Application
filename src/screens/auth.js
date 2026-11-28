@@ -4,11 +4,10 @@
    ===================================================================== */
 
 import { escapeHtml } from '../core/utils.js';
-import { icon, spinnerHtml, TOMATO_LOGO } from '../core/icons.js';
+import { spinnerHtml, TOMATO_LOGO } from '../core/icons.js';
 import { t, decoration } from '../core/theme-engine.js';
 import * as data from '../data/index.js';
 import { isValidEmail, PASSWORD_MIN, DISPLAY_NAME_MAX } from '../data/model.js';
-import { DEMO_USER } from '../data/demo-data.js';
 import { signIn } from '../app/account.js';
 import { actionButton, banner, errorMessage } from '../ui/components.js';
 
@@ -82,14 +81,6 @@ function passwordHint(length) {
 
 function loginScreen(app) {
   const notice = app.ui.notice ? banner('success', 'check', app.ui.notice) : '';
-  // The demo account only exists in the mock backend.
-  const demoHint =
-    data.backendKind === 'mock'
-      ? `<div class="demo-hint">${icon('info')}<div>
-           <div>${t('auth.demoHint')}</div>
-           ${actionButton('fillDemoAccount', t('auth.useDemo'), { className: 'btn-link' })}
-         </div></div>`
-      : '';
   return `
     <form data-form="login" novalidate>
       <h1>${t('auth.login.title')}</h1>
@@ -106,7 +97,6 @@ function loginScreen(app) {
         ${t('auth.noAccount')}
         ${actionButton('goToAuthScreen', t('auth.createLink'), { arg: 'register', className: 'btn-link' })}
       </p>
-      ${demoHint}
     </form>`;
 }
 
@@ -147,23 +137,6 @@ function forgotPasswordScreen(app) {
     </form>`;
 }
 
-/** "Check your email". With the mock backend no email is sent, so a button opens the reset step. */
-function resetLinkSentScreen(app) {
-  const mockStep =
-    data.backendKind === 'mock'
-      ? `${actionButton('openResetStep', t('auth.sent.mockLink'), { className: 'btn btn-primary btn-block btn-tall' })}
-         <p class="hint">${t('auth.sent.mock')}</p>`
-      : '';
-  return `
-    <div class="center-col" style="padding-top:6px">
-      <div class="state-icon ok">${icon('check')}</div>
-      <h1>${t('auth.sent.title')}</h1>
-      <p class="auth-sub">${t('auth.sent.body', { email: app.ui.resetEmail })}</p>
-      ${mockStep}
-      ${backToLoginLink()}
-    </div>`;
-}
-
 function resetPasswordScreen(app) {
   return `
     <form data-form="reset" novalidate>
@@ -185,7 +158,6 @@ const AUTH_SCREENS = {
   login: loginScreen,
   register: registerScreen,
   forgot: forgotPasswordScreen,
-  sent: resetLinkSentScreen,
   reset: resetPasswordScreen,
 };
 
@@ -287,9 +259,11 @@ export const forms = {
       (error) => (app.ui.errors.form = error.message)
     );
     if (!sent) return;
-    app.ui.resetEmail = email;
-    app.ui.screen = 'sent';
-    app.ui.focusAfterRender = data.backendKind === 'mock' ? 'openResetStep:' : 'goToAuthScreen:login';
+    // Accounts live on this device, so the new password is chosen right here.
+    Object.assign(app.ui, { resetEmail: email, screen: 'reset', errors: {} });
+    app.ui.authForm.password = '';
+    app.ui.authForm.password2 = '';
+    app.ui.focusAfterRender = 'authForm.password';
     app.render();
   },
 
@@ -332,21 +306,6 @@ export const actions = {
   },
   togglePasswordVisibility(app) {
     app.ui.showPassword = !app.ui.showPassword;
-    app.render();
-  },
-  fillDemoAccount(app) {
-    app.ui.authForm.email = DEMO_USER.email;
-    app.ui.authForm.password = DEMO_USER.password;
-    app.ui.errors = {};
-    app.ui.focusAfterRender = 'submit-login';
-    app.render();
-  },
-  /** Mock backend only: stands in for clicking the link in the reset email. */
-  openResetStep(app) {
-    Object.assign(app.ui, { screen: 'reset', errors: {} });
-    app.ui.authForm.password = '';
-    app.ui.authForm.password2 = '';
-    app.ui.focusAfterRender = 'authForm.password';
     app.render();
   },
 };

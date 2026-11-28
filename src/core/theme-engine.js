@@ -6,7 +6,9 @@
        currency name
      - the THEME is one of that ecosystem's themes
    Components never hard-code colors, fonts or text. They read:
-     - CSS variables (var(--primary), …) set from theme.tokens
+     - CSS variables (var(--primary), …) set from theme.tokens; themes
+       marked `accentable` take primary / on-primary / mode-focus from
+       the user's button color (setAccent)
      - text from t(key): theme.copy, then the ecosystem's copy, then BASE_COPY
      - the currency name: {currency} / {Currency} in any text
      - optional decorations from decoration(slot)
@@ -16,9 +18,11 @@
 import { BASE_COPY } from './copy.js';
 import { escapeHtml } from './utils.js';
 import { ALL_THEMES, DEFAULT_MODE, getEcosystem } from '../content/index.js';
+import { DEFAULT_ACCENT, findAccent } from '../content/shared.js';
 
 let currentMode = DEFAULT_MODE;
 let currentThemeId = getEcosystem(DEFAULT_MODE).defaults.theme;
+let currentAccent = DEFAULT_ACCENT;
 
 /* ------------------------------ Mode ------------------------------ */
 
@@ -39,6 +43,22 @@ export function activeEcosystem() {
 /** The shared currency's name in the active ecosystem: { name: 'points', title: 'Points' }. */
 export function currency() {
   return activeEcosystem().currency;
+}
+
+/* ------------------------------ Accent ------------------------------ */
+
+/** Pick the button color (an id from ACCENTS in src/content/shared.js). Call applyTheme() afterwards. */
+export function setAccent(accentId) {
+  currentAccent = findAccent(accentId).id;
+}
+
+export function activeAccentId() {
+  return currentAccent;
+}
+
+/** True when the active theme lets the user pick its button color. */
+export function themeHasAccent() {
+  return Boolean(activeTheme().accentable);
 }
 
 /* ------------------------------ Themes ------------------------------ */
@@ -69,6 +89,12 @@ export function applyTheme(themeId) {
 
   const root = document.documentElement;
   for (const [token, value] of Object.entries(theme.tokens)) root.style.setProperty('--' + token, value);
+  if (theme.accentable) {
+    const colors = findAccent(currentAccent)[theme.appearance === 'dark' ? 'dark' : 'light'];
+    root.style.setProperty('--primary', colors.primary);
+    root.style.setProperty('--on-primary', colors.on);
+    root.style.setProperty('--mode-focus', colors.primary); // the Start / Pause buttons and focus ring
+  }
   root.dataset.theme = theme.id;
   root.dataset.mode = currentMode;
   root.dataset.appearance = theme.appearance;

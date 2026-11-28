@@ -2,7 +2,7 @@
 
 This is the app itself: a plain website hosted on GitHub Pages. The clickable prototype stays in `design/prototype/` and isn't used by the app.
 
-The app works fully with a **mock backend** that keeps everything in the browser's localStorage. The real backend replaces one file (see [Plugging in the backend](#plugging-in-the-backend)), and nothing else changes.
+The app keeps accounts and data on the device: the **local backend** stores them in the extension's storage, or in localStorage on the website. Devices sync with each other over the local network through a small sync service (see [docs/SYNC.md](docs/SYNC.md)). A server backend could replace one file (see [Plugging in the backend](#plugging-in-the-backend)), and nothing else would change.
 
 ## Run it locally
 
@@ -14,7 +14,9 @@ python3 -m http.server 8080      # then open http://localhost:8080
 
 VS Code's **Live Server** extension works too.
 
-Log in with the demo account `demo@example.com` / `pomodoro123`, or create an account. After changing code, refresh the page.
+Create an account. After changing code, refresh the page. To try sync, also run `node sync-service/pomodoro-sync.mjs`. `http://localhost:8080` and `http://127.0.0.1:8080` keep separate storage, so they work as two devices on one computer.
+
+The developer console (timer speed, end session now) is off in releases. Set `devTools: true` in `src/config.js` to use it.
 
 ## Put it on GitHub Pages
 
@@ -54,9 +56,13 @@ src/
 
   data/                  the ONLY way to reach the backend
     index.js             picks the backend from config.js
-    mock-backend.js      in-browser backend with the demo account
+    local-backend.js     accounts and data on this device (+ snapshots for sync)
     model.js             defaults + validation shared by every backend
-    demo-data.js, errors.js
+    errors.js
+
+  sync/                  device sync over the local network (docs/SYNC.md)
+    engine.js            pairing with a verification code, syncing, auto-sync
+    crypto.js, merge.js, relay.js
 
   timer/                 timer rules as plain functions
   services/              things that run next to the screens
@@ -86,6 +92,7 @@ src/
     shop.js              Shop tab
     settings.js          Settings tab
     profile.js           Profile
+    devices.js           Devices: pairing and syncing with your other devices
     tabs.js              which file draws which tab
     index.js             collects every screen's actions/forms
 
@@ -130,7 +137,7 @@ Screens read state from `app` (`app.tasks()`, `app.settings()`, `app.timer`, `ap
 
 Every data call goes through `src/data/index.js`, so the backend is one new file. If it needs a library such as the Firebase SDK, import it from a CDN URL inside that file, since there's no bundler:
 
-1. Create `src/data/<name>-backend.js` that exports the same functions as `mock-backend.js` (the data contract in the team plan):
+1. Create `src/data/<name>-backend.js` that exports the same functions as `local-backend.js` (the data contract in the team plan):
    - accounts: `signUp`, `signIn`, `signOut`, `resetPassword`, `getCurrentUser`, `updateProfile`
    - data: `getTasks`, `saveTask`, `deleteTask`, `recordSession`, `getSessions`, `getSettings`, `saveSettings`, `getPurchases`, `purchase`
 2. Use `model.js` for the same validation and defaults: `prepareTask`, `prepareSession`, `normalizeSettings`, `validateSettings`, `preparePurchase`.
@@ -145,7 +152,8 @@ Things the app relies on:
 - **Stay signed in.** `getCurrentUser()` must work after a reload and must not need the network.
 - **Sign-in in storage.** Keep it in storage under `STORAGE_KEYS.auth` (use `storage` from `src/core/storage.js`). Logging out must remove that key, because `src/services/index.js` watches it to clear the timer and reminders.
 - **Safe retries.** `recordSession()` may be called more than once with the same session `id` (offline retries). Save it under that id so it's never counted twice.
-- **Password reset.** Only the mock backend has `confirmPasswordReset` (the in-app "Set a new password" step). A real backend emails a link and handles the new password on its own page.
+- **Password reset.** The local backend has `confirmPasswordReset` (the in-app "Set a new password" step, since accounts live on the device). A server backend emails a link and handles the new password on its own page.
+- **Sync.** `exportSnapshot()` and `importSnapshot()` are what device sync uses (src/sync/). A server backend can leave them out if it does its own syncing.
 
 ## Decisions beyond the data contract
 

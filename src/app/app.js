@@ -23,6 +23,7 @@ import { createSettingsDraft, hasUnsavedSettings } from './settings-draft.js';
 import { applyAppearance } from './account.js';
 import { playSound } from '../services/sound.js';
 import { renderApp, renderToasts } from './render.js';
+import { emptySyncView } from './sync-client.js';
 
 const PRIORITY_ORDER = { High: 0, Medium: 1, Low: 2 };
 
@@ -42,6 +43,7 @@ export class App {
     this.timer = createIdleTimer();
     this.toasts = [];
     this.alert = null; // session-complete card
+    this.sync = emptySyncView(); // device sync over the local network (src/app/sync-client.js)
 
     hostElement.innerHTML = `
       <div class="app-host" style="height:100%"></div>
@@ -158,9 +160,14 @@ export class App {
       this.ui.openMenuTaskId = null;
       this.ui.openPopover = null;
       if (destination === 'profile') {
-        if (this.ui.screen !== 'profile') this.ui.previousTab = this.ui.tab;
+        if (this.ui.screen === 'main') this.ui.previousTab = this.ui.tab;
         this.ui.screen = 'profile';
         this.ui.profileForm = { displayName: this.user.displayName, error: null, isBusy: false };
+        this.ui.focusAfterRender = 'goBack:';
+      } else if (destination === 'devices') {
+        if (this.ui.screen === 'main') this.ui.previousTab = this.ui.tab;
+        this.ui.screen = 'devices';
+        this.ui.deviceName = null;
         this.ui.focusAfterRender = 'goBack:';
       } else {
         this.ui.screen = 'main';

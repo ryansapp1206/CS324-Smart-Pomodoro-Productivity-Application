@@ -81,3 +81,25 @@ button {
     max-height: none;
   }
 }
+
+/* Browser-extension toolbar popup (index.html?popup): the popup window
+   takes its size from the page, so give it the app's size and drop the
+   card look. */
+html[data-surface='popup'] body {
+  display: block;
+  width: 400px;
+  height: 600px;
+  min-height: 0;
+}
+
+html[data-surface='popup'] .app-frame,
+html[data-surface='popup'] .app-frame:has(.auth),
+html[data-surface='popup'] .app-frame:has(.auth) .auth {
+  width: 400px;
+  height: 600px;
+  min-height: 0;
+  max-height: 600px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}

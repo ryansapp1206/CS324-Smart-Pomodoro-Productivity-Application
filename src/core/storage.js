@@ -5,13 +5,22 @@
    in other open tabs of the app, so two tabs stay in step.
    Falls back to memory when localStorage isn't available (Node unit tests,
    some private-browsing modes).
+   In the browser extension, everything is kept in the extension's own
+   storage (storage.local) instead, so the popup, a full tab and the
+   background all share the same accounts, tasks, timer and settings, and
+   it survives the browser restarting.
    ===================================================================== */
+
+import { ext } from './platform.js';
 
 const PREFIX = 'brp:';
 const memory = new Map();
 const listeners = new Map(); // key → Set of listeners
 
+const extensionArea = ext?.storage?.local || null;
+
 const local = (() => {
+  if (extensionArea) return null;
   try {
     const store = globalThis.localStorage;
     store.setItem(PREFIX + 'test', '1');
@@ -39,19 +48,37 @@ function announce(key, value) {
   if (set) queueMicrotask(() => set.forEach((listener) => listener(value)));
 }
 
+/** The same three operations on the extension's storage. Its onChanged event reports every change, including our own. */
+const extensionStorage = {
+  async get(key, fallback = null) {
+    const result = await extensionArea.get(PREFIX + key);
+    const value = result[PREFIX + key];
+    return value === undefined ? fallback : value;
+  },
+  async set(key, value) {
+    await extensionArea.set({ [PREFIX + key]: value });
+  },
+  async remove(key) {
+    await extensionArea.remove(PREFIX + key);
+  },
+};
+
 export const storage = {
   async get(key, fallback = null) {
+    if (extensionArea) return extensionStorage.get(key, fallback);
     const value = read(key);
     return value === undefined ? fallback : value;
   },
 
   async set(key, value) {
+    if (extensionArea) return extensionStorage.set(key, value);
     if (local) local.setItem(PREFIX + key, JSON.stringify(value));
     else memory.set(key, structuredClone(value));
     announce(key, structuredClone(value));
   },
 
   async remove(key) {
+    if (extensionArea) return extensionStorage.remove(key);
     if (local) local.removeItem(PREFIX + key);
     else memory.delete(key);
     announce(key, undefined);
@@ -63,6 +90,16 @@ export const storage = {
     listeners.get(key).add(listener);
   },
 };
+
+// Extension: changes made anywhere (popup, tab, background).
+if (extensionArea) {
+  ext.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName !== 'local') return;
+    for (const [fullKey, change] of Object.entries(changes)) {
+      if (fullKey.startsWith(PREFIX)) announce(fullKey.slice(PREFIX.length), change.newValue);
+    }
+  });
+}
 
 // Changes made in other tabs.
 if (local && typeof window !== 'undefined') {
@@ -82,6 +119,12 @@ export const STORAGE_KEYS = {
   pendingSessions: 'pendingSessions', // sessions that couldn't be saved yet, retried automatically
   remindedOn: 'remindedOn', // deadline banner log: { taskId: 'YYYY-MM-DD' }
   notifiedOn: 'notifiedOn', // deadline notification log: { taskId: 'YYYY-MM-DD' }
-  mockCloud: 'mockCloud', // the mock backend's data
+  localStore: 'localStore', // accounts and their data (src/data/local-backend.js)
+  legacyMockCloud: 'mockCloud', // the prototype's store, moved into localStore once
+  syncDevice: 'syncDevice', // this app's id, name and token for the local sync service
+  syncConfig: 'syncConfig', // { autoSync } for this device
+  syncStatus: 'syncStatus', // sync service state, nearby devices, notices (src/sync/engine.js)
+  syncPairing: 'syncPairing', // the device pairing in progress
+  syncPeers: (userId) => `syncPeers:${userId}`, // devices paired with this account, with their keys
   cache: (userId) => `cache:${userId}`, // last data loaded from the backend, shown if loading fails
 };

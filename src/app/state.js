@@ -6,7 +6,7 @@
 
 export function createUiState() {
   return {
-    screen: 'login', // signed out: login | register | forgot | sent | reset; signed in: main | profile
+    screen: 'login', // signed out: login | register | forgot | reset; signed in: main | profile | devices
     tab: 'timer', // timer | tasks | stats | shop | settings
     previousTab: 'timer',
     authForm: { email: '', password: '', password2: '', name: '' },
@@ -15,6 +15,9 @@ export function createUiState() {
     isBusy: false,
     showPassword: false,
     resetEmail: '',
+    pairCode: '', // the code typed while pairing a device
+    peerAddress: '', // Devices → Add by address
+    deviceName: null, // Devices → rename this device (null = not edited)
     taskFilter: 'open', // open | completed
     shopCategory: 'theme', // theme | sound | avatar
     openMenuTaskId: null,

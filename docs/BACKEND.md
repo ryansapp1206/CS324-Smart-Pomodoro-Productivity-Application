@@ -1,5 +1,7 @@
 # How the app talks to its backend (and how to plug in a real one)
 
+> **Current state:** the app now ships with the **local backend** (`src/data/local-backend.js`, `CONFIG.backend = 'local'`). It keeps accounts on the device, and syncs between your devices over the local network ([SYNC.md](SYNC.md)). The demo account and the `mock` backend are gone. Where this guide says "mock" or `mock-backend.js`, read `local-backend.js`. The contract below is unchanged, plus `exportSnapshot()` / `importSnapshot()` for device sync.
+
 This guide is for whoever builds the real backend, and for any AI assistant helping them. It explains how the current **mock backend** works, who calls it and when, and exactly what a real backend has to do to replace it without changing any screens.
 
 **If you're using an AI assistant**, give it this file plus these four source files:
@@ -71,7 +73,7 @@ Dates are `YYYY-MM-DD`; times are ISO 8601 strings in UTC; lengths are in minute
 // Settings
 { durations: { focus: 25, shortBreak: 5, longBreak: 15 },
   alertSound: false, deadlineReminders: true,
-  theme: 'light', soundPack: 'classic-beep', avatar: 'initials',
+  theme: 'dark', soundPack: 'classic-beep', avatar: 'initials',
   mode: 'professional',              // 'professional' | 'brainrot' (which content ecosystem is active)
   sessionAlerts: true, breakAlerts: true, autoStart: false, reduceMotion: false,
   dailyReminder: { enabled: false, time: '09:00' },

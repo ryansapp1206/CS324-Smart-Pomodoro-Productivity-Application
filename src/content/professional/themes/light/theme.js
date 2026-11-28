@@ -1,4 +1,4 @@
-/* Light: the default theme. Clean and professional. Also documents the
+/* Light: the bright professional theme. Also documents the
    full token list, so copy this file when you start a new theme. */
 
 import { SHARED_TOKENS } from '../../../shared.js';
@@ -8,6 +8,7 @@ export default {
   name: 'Light',
   description: 'Clean, bright and easy to read.',
   appearance: 'light',
+  accentable: true, // primary, on-primary and mode-focus follow the user's button color (settings.accent)
   price: 0,
   tokens: {
     ...SHARED_TOKENS,
@@ -22,7 +23,7 @@ export default {
     text: '#1d1b18',
     'text-muted': '#5c5750',
     // Brand and states
-    primary: '#c0392b',
+    primary: '#2563eb',
     'on-primary': '#ffffff',
     'focus-ring': '#2563eb',
     success: '#15803d',
@@ -35,7 +36,7 @@ export default {
     info: '#1d4ed8',
     'info-bg': '#e8effd',
     // Timer modes
-    'mode-focus': '#c0392b',
+    'mode-focus': '#2563eb',
     'mode-short': '#0f766e',
     'mode-long': '#4338ca',
     'on-mode': '#ffffff',

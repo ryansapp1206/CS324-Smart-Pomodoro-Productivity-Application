@@ -1,5 +1,5 @@
 /* ===================================================================
-   BASE: page, typography, focus ring
+   BASE: page, typography, focus ring, text selection
    Colors, fonts and sizes come from theme tokens (var(--token)) only.
    =================================================================== */
 
@@ -58,4 +58,27 @@ svg.i {
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+/* An icon standing in for a text symbol (∞, ×, …): sized and aligned like the text around it. */
+svg.i.i-glyph {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+}
+
+/* ---- Text selection ----
+   Interface text (labels, headings, buttons, the timer) can't be selected,
+   so hovering or dragging over it keeps the normal arrow instead of a text
+   cursor. Form fields, and anything marked .selectable, opt back in.
+   :where() keeps these rules at zero specificity so component cursors
+   (cursor: pointer on buttons, switches, …) still win. */
+.app-frame {
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+:where(.app-frame) :where(input, textarea, select, [contenteditable]:not([contenteditable="false"]), .selectable) {
+  -webkit-user-select: text;
+  user-select: text;
+  cursor: auto;
 }

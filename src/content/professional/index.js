@@ -23,7 +23,7 @@ export default {
   copy: {},
 
   /** Equipped when nothing else is, and always owned. */
-  defaults: { theme: 'light', soundPack: 'classic-beep', avatar: 'initials' },
+  defaults: { theme: 'dark', soundPack: 'classic-beep', avatar: 'initials' },
 
   /** Shown in this order in Settings and the Shop. */
   themes: [light, dark, ocean],

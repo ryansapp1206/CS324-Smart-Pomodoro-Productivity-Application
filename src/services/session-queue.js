@@ -9,9 +9,10 @@
 
 import { storage, STORAGE_KEYS } from '../core/storage.js';
 import { recordSession } from '../data/index.js';
+import { scheduler } from '../core/scheduler.js';
 
 const RETRY_MS = 5 * 60000;
-let retryTimer = null;
+scheduler.define('session-retry', () => flushPendingSessions());
 
 export async function pendingSessions() {
   return (await storage.get(STORAGE_KEYS.pendingSessions)) || [];
@@ -41,8 +42,8 @@ export function flushPendingSessions() {
         }
       }
       const left = (await pendingSessions()).length;
-      clearTimeout(retryTimer);
-      if (left) retryTimer = setTimeout(flushPendingSessions, RETRY_MS);
+      if (left) scheduler.at('session-retry', Date.now() + RETRY_MS);
+      else scheduler.cancel('session-retry');
       return left;
     } finally {
       flushing = null;

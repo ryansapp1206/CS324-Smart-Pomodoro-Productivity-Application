@@ -1,5 +1,5 @@
 /* =====================================================================
-   REMINDERS (while the page is open)
+   REMINDERS (while the page is open; always, in the extension)
    - Deadline reminders: hourly, a notification for open tasks due today or
      tomorrow, at most once per task per day. (When the app opens, the
      same tasks are shown in a banner, see src/app/deadlines.js.)
@@ -12,14 +12,20 @@ import { t } from '../core/theme-engine.js';
 import { getTasks } from '../data/index.js';
 import { isSignedIn, loadSettings } from './context.js';
 import { showNotification } from './notify.js';
+import { scheduler } from '../core/scheduler.js';
 
 const HOUR_MS = 60 * 60000;
-let deadlineTimer = null;
-let dailyTimer = null;
+let dailyScheduled = false;
+
+scheduler.define('deadlines', () => checkDeadlines());
+scheduler.define('daily-reminder', async () => {
+  dailyScheduled = false;
+  await showDailyReminder();
+  scheduleDailyReminder(); // and again tomorrow
+});
 
 export function scheduleDeadlineChecks() {
-  clearInterval(deadlineTimer);
-  deadlineTimer = setInterval(checkDeadlines, HOUR_MS);
+  scheduler.every('deadlines', HOUR_MS);
 }
 
 export async function checkDeadlines() {
@@ -59,20 +65,19 @@ export function nextOccurrence(time, now = new Date()) {
 }
 
 export async function scheduleDailyReminder() {
-  clearTimeout(dailyTimer);
-  dailyTimer = null;
-  if (!(await isSignedIn())) return;
-  const settings = await loadSettings();
-  if (!settings.dailyReminder.enabled) return;
-  dailyTimer = setTimeout(async () => {
-    await showDailyReminder();
-    scheduleDailyReminder(); // and again tomorrow
-  }, nextOccurrence(settings.dailyReminder.time) - Date.now());
+  const settings = (await isSignedIn()) ? await loadSettings() : null;
+  if (!settings || !settings.dailyReminder.enabled) {
+    scheduler.cancel('daily-reminder');
+    dailyScheduled = false;
+    return;
+  }
+  scheduler.at('daily-reminder', nextOccurrence(settings.dailyReminder.time));
+  dailyScheduled = true;
 }
 
 /** True while a daily reminder is scheduled (used by tests). */
 export function dailyReminderScheduled() {
-  return dailyTimer !== null;
+  return dailyScheduled;
 }
 
 async function showDailyReminder() {
@@ -80,7 +85,7 @@ async function showDailyReminder() {
 }
 
 export function stopReminders() {
-  clearInterval(deadlineTimer);
-  clearTimeout(dailyTimer);
-  dailyTimer = null;
+  scheduler.cancel('deadlines');
+  scheduler.cancel('daily-reminder');
+  dailyScheduled = false;
 }

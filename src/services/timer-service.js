@@ -9,12 +9,13 @@
 import { storage, STORAGE_KEYS } from '../core/storage.js';
 import * as rules from '../timer/rules.js';
 import { sessionEndMessage } from '../timer/messages.js';
-import { loadSettings } from './context.js';
+import { scheduler } from '../core/scheduler.js';
+import { isUiVisible, loadSettings } from './context.js';
 import { showNotification, updateTabTitle } from './notify.js';
 import { playSound } from './sound.js';
 import { queueSession } from './session-queue.js';
 
-let sessionEndTimer = null;
+scheduler.define('session-end', () => checkSessionEnd());
 
 async function loadTimer() {
   return (await storage.get(STORAGE_KEYS.timer)) || rules.createIdleTimer();
@@ -29,10 +30,8 @@ async function saveTimer(timer, settings) {
 }
 
 function scheduleSessionEnd(timer) {
-  clearTimeout(sessionEndTimer);
-  if (timer.status === 'running') {
-    sessionEndTimer = setTimeout(checkSessionEnd, Math.max(0, timer.endsAt - Date.now()) + 50);
-  }
+  if (timer.status === 'running') scheduler.at('session-end', timer.endsAt + 50);
+  else scheduler.cancel('session-end');
 }
 
 const COMMANDS = {
@@ -97,7 +96,7 @@ async function finishSession(timer, settings) {
   // Only notify if it ended just now, not hours ago while the page was closed.
   const endedRecently = Date.now() - timer.endsAt < 60000;
   const alertsOn = result.finishedMode === 'focus' ? settings.sessionAlerts : settings.breakAlerts;
-  if (endedRecently && alertsOn && document.hidden) {
+  if (endedRecently && alertsOn && !isUiVisible()) {
     const { title, body } = sessionEndMessage(alert);
     showNotification('session-end', title, body);
   }
