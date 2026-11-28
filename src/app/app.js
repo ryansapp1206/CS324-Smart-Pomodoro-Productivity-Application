@@ -134,6 +134,7 @@ export class App {
 
   /** Toast every achievement unlocked since `before` (a Set of ids). */
   celebrateNewAchievements(before) {
+    if (this.settings().showAchievements === false) return; // still tracked, just no pop-ups
     const after = this.achievementIds();
     if ([...after].some((id) => !before.has(id))) playSound('achievement');
     for (const achievement of ACHIEVEMENTS) {

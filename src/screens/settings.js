@@ -163,6 +163,7 @@ export function settingsScreen(app) {
         ${actionButton('openShop', t('currency.moreThemes'), { arg: 'theme', className: 'btn-link', focusId: 'openShop:settings' })}
       </div>
       ${brainrotModeRow(draft)}
+      ${switchRow(app, 'settingsDraft.showAchievements', 'set.showAchievements', 'set.showAchievementsSub')}
       ${switchRow(app, 'settingsDraft.reduceMotion', 'set.reduceMotion', 'set.reduceMotionSub')}
     </section>
 

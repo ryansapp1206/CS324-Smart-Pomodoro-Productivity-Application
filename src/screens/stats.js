@@ -10,9 +10,29 @@ import { t, decoration } from '../core/theme-engine.js';
 import { ACHIEVEMENTS, REWARDS, calculateProgress, unlockedAchievementIds } from '../shop/progress.js';
 import { sendTimerCommand } from '../app/timer-client.js';
 import { actionButton, balanceHtml } from '../ui/components.js';
+import * as data from '../data/index.js';
+import { saveChange } from '../app/saving.js';
+import { shareSettings } from '../app/account.js';
 
 const minutesOn = (sessions, dayKey) =>
   sessions.filter((session) => toDayKey(session.startedAt) === dayKey).reduce((total, session) => total + session.durationMinutes, 0);
+
+/** False when Settings → "Show achievements" is off. Missing (older saved settings) counts as on. */
+const achievementsVisible = (app) => app.settings().showAchievements !== false;
+
+/** The fold state is saved separately from the Settings form, like task sort. */
+function saveAchievementsCollapsed(app, collapsed) {
+  const previous = Boolean(app.settings().achievementsCollapsed);
+  const settings = { ...app.settings(), achievementsCollapsed: collapsed };
+  return saveChange(app, {
+    apply: () => (app.data.settings = settings),
+    revert: () => (app.data.settings = { ...app.settings(), achievementsCollapsed: previous }),
+    remote: async () => {
+      app.data.settings = await data.saveSettings(settings);
+      await shareSettings(app.data.settings);
+    },
+  });
+}
 
 function balanceCard(app) {
   const rewards = { s: REWARDS.focusSession, t: REWARDS.taskDone, a: REWARDS.achievement };
@@ -29,7 +49,7 @@ function balanceCard(app) {
 }
 
 export function statsScreen(app) {
-  return balanceCard(app) + (app.data.sessions.length ? statsDetails(app) : statsEmptyState() + achievementsCard(app));
+  return balanceCard(app) + (app.data.sessions.length ? statsDetails(app) : statsEmptyState() + (achievementsVisible(app) ? achievementsCard(app) : ''));
 }
 
 function statsEmptyState() {
@@ -59,7 +79,7 @@ function statsDetails(app) {
     </div>
     ${weeklyChartCard(app)}
     ${streakCard(app)}
-    ${achievementsCard(app)}`;
+    ${achievementsVisible(app) ? achievementsCard(app) : ''}`;
 }
 
 /** Bar chart of focus minutes for the last 7 days. Each bar is focusable and labelled. */
@@ -138,11 +158,9 @@ function achievementItem(achievement, progress, isUnlocked) {
       </li>`;
 }
 
-/**
- * Achievements, split into "Unlocked" and "Up next". Locked ones are sorted by
- * how close you are, so the first one is the next you'll earn.
- */
+/** Achievements, split into "Up next" (closest first) and "Unlocked". */
 function achievementsCard(app) {
+  const collapsed = Boolean(app.settings().achievementsCollapsed);
   const progress = calculateProgress(app.data);
   const unlocked = unlockedAchievementIds(app.data);
   const percentOf = (achievement) => Math.min(100, (progress[achievement.track] / achievement.goal) * 100);
@@ -159,20 +177,39 @@ function achievementsCard(app) {
 
   const note = !done.length ? t('stats.achNone') : !next.length ? t('stats.achAll') : '';
 
+  const toggle = actionButton('toggleAchievements', t(collapsed ? 'stats.achShow' : 'stats.achHide'), {
+    className: 'btn btn-sm btn-ghost',
+    focusId: 'toggleAchievements',
+    ariaLabel: t(collapsed ? 'stats.achShowLabel' : 'stats.achHideLabel'),
+    attributes: `aria-expanded="${!collapsed}"`,
+  });
+
+  const body = collapsed
+    ? ''
+    : `
+      <p class="small muted" style="margin:-2px 0 0">${t('stats.achRewardNote', { n: REWARDS.achievement })}</p>
+      ${note ? `<p class="small" style="margin:10px 0 0">${note}</p>` : ''}
+      ${group('stats.achNextHead', next, false)}
+      ${group('stats.achUnlockedHead', done, true)}`;
+
   return `
     <section class="card" data-achievements>
       <div class="card-h">
         <h2>${t('stats.ach')}</h2>
-        <span class="small muted">${t('stats.achSub', { n: unlocked.size, total: ACHIEVEMENTS.length })}</span>
-      </div>
-      <p class="small muted" style="margin:-2px 0 0">${t('stats.achRewardNote', { n: REWARDS.achievement })}</p>
-      ${note ? `<p class="small" style="margin:10px 0 0">${note}</p>` : ''}
-      ${group('stats.achNextHead', next, false)}
-      ${group('stats.achUnlockedHead', done, true)}
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="small muted">${t('stats.achSub', { n: unlocked.size, total: ACHIEVEMENTS.length })}</span>
+          ${toggle}
+        </div>
+      </div>${body}
     </section>`;
 }
 
 export const actions = {
+  toggleAchievements(app) {
+    app.ui.focusAfterRender = 'toggleAchievements';
+    saveAchievementsCollapsed(app, !app.settings().achievementsCollapsed);
+  },
+
   startFocusing(app) {
     app.navigate('timer');
     if (app.timer.status !== 'idle') return;

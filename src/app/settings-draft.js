@@ -35,6 +35,7 @@ export function draftToSettings(draft, current) {
   const settings = structuredClone(draft);
   for (const key of Object.keys(DURATION_LIMITS)) settings.durations[key] = Number(draft.durations[key]);
   settings.taskSort = current.taskSort;
+  settings.achievementsCollapsed = current.achievementsCollapsed;
   return settings;
 }
 
@@ -45,6 +46,7 @@ export function hasUnsavedSettings(app) {
     const copy = structuredClone(settings);
     for (const key of Object.keys(DURATION_LIMITS)) copy.durations[key] = String(copy.durations[key]);
     delete copy.taskSort;
+    delete copy.achievementsCollapsed;
     return JSON.stringify(copy);
   };
   return comparable(draft) !== comparable(app.settings());

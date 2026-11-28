@@ -44,6 +44,8 @@ export const DEFAULT_SETTINGS = {
   reduceMotion: false,
   dailyReminder: { enabled: false, time: '09:00' },
   taskSort: 'due', // 'due' | 'priority'
+  showAchievements: true, // false hides the achievements card and unlock pop-ups (still tracked)
+  achievementsCollapsed: false, // true folds the achievements list on Stats
 };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
