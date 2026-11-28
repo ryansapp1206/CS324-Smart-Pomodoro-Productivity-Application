@@ -1,0 +1,19 @@
+/* Mogger theme-only styles. Every rule is scoped to this theme. */
+
+/* Red-to-pink logo. */
+[data-theme="mogger"] .logo span {
+  background: linear-gradient(90deg, #ff4d4d, #ff9a8f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Sharp diagonal slashes on the header and tab bar. */
+[data-theme="mogger"] .hdr,
+[data-theme="mogger"] .tabbar {
+  background-image: repeating-linear-gradient(
+    115deg,
+    rgba(255, 77, 77, 0.06) 0 2px,
+    transparent 2px 16px
+  );
+}

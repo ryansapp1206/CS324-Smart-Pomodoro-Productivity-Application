@@ -1,0 +1,35 @@
+/* Sigma Grindset theme-only styles. Every rule is scoped to this theme. */
+
+/* Gold logo with a slow shimmer. */
+[data-theme="sigma-grindset"] .logo span {
+  background: linear-gradient(100deg, #d4a62a 0%, #f6d974 45%, #d4a62a 90%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sigma-shimmer 6s ease-in-out infinite alternate;
+}
+@keyframes sigma-shimmer {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+/* Faint gold pinstripes on the header and tab bar. */
+[data-theme="sigma-grindset"] .hdr,
+[data-theme="sigma-grindset"] .tabbar {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(212, 166, 42, 0.05) 0 1px,
+    transparent 1px 14px
+  );
+}
+
+/* Reduce motion (the app setting or the system setting): no shimmer. */
+[data-reduce-motion="true"][data-theme="sigma-grindset"] .logo span {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="sigma-grindset"] .logo span {
+    animation: none;
+  }
+}

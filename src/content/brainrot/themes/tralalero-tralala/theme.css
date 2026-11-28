@@ -1,0 +1,19 @@
+/* Tralalero Tralala theme-only styles. Every rule is scoped to this theme. */
+
+/* Ocean gradient logo. */
+[data-theme="tralalero-tralala"] .logo span {
+  background: linear-gradient(90deg, #01659a, #00697a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Soft wave stripes on the header and tab bar. */
+[data-theme="tralalero-tralala"] .hdr,
+[data-theme="tralalero-tralala"] .tabbar {
+  background-image: repeating-linear-gradient(
+    175deg,
+    rgba(2, 119, 189, 0.06) 0 6px,
+    transparent 6px 14px
+  );
+}
