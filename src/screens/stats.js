@@ -29,7 +29,7 @@ function balanceCard(app) {
 }
 
 export function statsScreen(app) {
-  return balanceCard(app) + (app.data.sessions.length ? statsDetails(app) : statsEmptyState());
+  return balanceCard(app) + (app.data.sessions.length ? statsDetails(app) : statsEmptyState() + achievementsCard(app));
 }
 
 function statsEmptyState() {
@@ -117,20 +117,16 @@ function streakCard(app) {
     </section>`;
 }
 
-function achievementsCard(app) {
-  const progress = calculateProgress(app.data);
-  const unlocked = unlockedAchievementIds(app.data);
-
-  const items = ACHIEVEMENTS.map((achievement) => {
-    const value = progress[achievement.track];
-    const isUnlocked = unlocked.has(achievement.id);
-    const percent = Math.min(100, Math.round((value / achievement.goal) * 100));
-    const progressText =
-      achievement.track === 'minutes'
-        ? `${Math.floor(Math.min(value, achievement.goal) / 60)}h / ${achievement.goal / 60}h`
-        : `${Math.min(value, achievement.goal)}/${achievement.goal}`;
-    const status = isUnlocked ? t('ach.unlocked') : `<span class="sr-only">${t('ach.locked')}, </span>${progressText}`;
-    return `
+/** One achievement row: icon, name, progress bar and status. */
+function achievementItem(achievement, progress, isUnlocked) {
+  const value = progress[achievement.track];
+  const percent = Math.min(100, Math.round((value / achievement.goal) * 100));
+  const progressText =
+    achievement.track === 'minutes'
+      ? `${Math.floor(Math.min(value, achievement.goal) / 60)}h / ${achievement.goal / 60}h`
+      : `${Math.min(value, achievement.goal)}/${achievement.goal}`;
+  const status = isUnlocked ? t('ach.unlocked') : `<span class="sr-only">${t('ach.locked')}, </span>${progressText}`;
+  return `
       <li class="ach${isUnlocked ? ' on' : ''}">
         <span class="ach-icon" aria-hidden="true">${icon(achievement.icon)}</span>
         <div style="flex:1;min-width:0">
@@ -140,7 +136,28 @@ function achievementsCard(app) {
         </div>
         ${decoration('achievement-badge-frame')}
       </li>`;
-  }).join('');
+}
+
+/**
+ * Achievements, split into "Unlocked" and "Up next". Locked ones are sorted by
+ * how close you are, so the first one is the next you'll earn.
+ */
+function achievementsCard(app) {
+  const progress = calculateProgress(app.data);
+  const unlocked = unlockedAchievementIds(app.data);
+  const percentOf = (achievement) => Math.min(100, (progress[achievement.track] / achievement.goal) * 100);
+
+  const done = ACHIEVEMENTS.filter((achievement) => unlocked.has(achievement.id));
+  const next = ACHIEVEMENTS.filter((achievement) => !unlocked.has(achievement.id)).sort((a, b) => percentOf(b) - percentOf(a));
+
+  const group = (headKey, list, isUnlocked) =>
+    list.length
+      ? `
+      <div class="small" style="font-weight:600;margin:14px 0 8px">${t(headKey, { n: list.length })}</div>
+      <ul class="ach-grid">${list.map((achievement) => achievementItem(achievement, progress, isUnlocked)).join('')}</ul>`
+      : '';
+
+  const note = !done.length ? t('stats.achNone') : !next.length ? t('stats.achAll') : '';
 
   return `
     <section class="card" data-achievements>
@@ -148,7 +165,10 @@ function achievementsCard(app) {
         <h2>${t('stats.ach')}</h2>
         <span class="small muted">${t('stats.achSub', { n: unlocked.size, total: ACHIEVEMENTS.length })}</span>
       </div>
-      <ul class="ach-grid">${items}</ul>
+      <p class="small muted" style="margin:-2px 0 0">${t('stats.achRewardNote', { n: REWARDS.achievement })}</p>
+      ${note ? `<p class="small" style="margin:10px 0 0">${note}</p>` : ''}
+      ${group('stats.achNextHead', next, false)}
+      ${group('stats.achUnlockedHead', done, true)}
     </section>`;
 }
 
